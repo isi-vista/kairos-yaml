@@ -295,7 +295,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     #                                assigned_info["schema_name"][1:].lower()
     schema: MutableMapping[str, Any] = {
         "@id": yaml_data.schema_id,
-        "comment": yaml_data.comment if yaml_data.comment is not None else "",
+        "comment": "",
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
         "description": yaml_data.schema_dscpt,
@@ -309,6 +309,8 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
     comments = ["Steps:"] + [f"{idx + 1}. {text}" for idx, text in enumerate(comments)]
     schema["comment"] = comments
+    if yaml_data.comment is not None:
+        schema["comment"] += f"\n{yaml_data.comment}"
 
     # Get steps
     steps = []
