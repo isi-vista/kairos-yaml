@@ -197,7 +197,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     #                                assigned_info["schema_name"][1:].lower()
     schema: MutableMapping[str, Any] = {
         "@id": yaml_data.schema_id,
-        "comment": '',
+        "comment": yaml_data.comment if yaml_data.comment is not None else "",
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
         "description": yaml_data.schema_dscpt,
@@ -298,6 +298,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     base_order_id = f'{schema["@id"]}/Order/'
     orders = []
     for order in yaml_data.order:
+        cur_comment = f"\n{order.comment}" if order.comment is not None else ""
         if isinstance(order, Before):
             before_idx = step_map[order.before]['step_idx']
             before_id = step_map[order.before]['id']
@@ -309,7 +310,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
                 logging.warning(f"after: {order.after} does not appear in the steps")
             cur_order: Mapping[str, Union[str, Sequence[str]]] = {
                 "@id": f"{base_order_id}precede-{before_idx}-{after_idx}",
-                "comment": f"{before_idx} precedes {after_idx}",
+                "comment": f"{before_idx} precedes {after_idx}{cur_comment}",
                 "before": before_id,
                 "after": after_id
             }
@@ -324,7 +325,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
                 logging.warning(f"contained: {order.contained} does not appear in the steps")
             cur_order = {
                 "@id": f"{base_order_id}contain-{container_idx}-{contained_idx}",
-                "comment": f"{container_idx} contains {contained_idx}",
+                "comment": f"{container_idx} contains {contained_idx}{cur_comment}",
                 "container": container_id,
                 "contained": contained_id
             }
@@ -340,7 +341,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
                 overlaps_id.append(overlap_id)
             cur_order = {
                 "@id": f"{base_order_id}overlap-{'-'.join(str(i) for i in overlaps_idx)}",
-                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps",
+                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps{cur_comment}",
                 "overlaps": overlaps_id,
             }
         else:
