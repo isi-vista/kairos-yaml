@@ -30,13 +30,15 @@ flake8:
 yamllint:
 	yamllint --strict $(YAML_FILES)
 
+SORT=sort --key=1,1 --key=3V --field-separator="="
+
 reqs-fix:
-	sort --output=requirements.txt requirements.txt
-	sort --output=requirements-dev.txt requirements-dev.txt
+	$(SORT) --output=requirements.txt requirements.txt
+	$(SORT) --output=requirements-dev.txt requirements-dev.txt
 
 reqs-check:
-	sort --check requirements.txt
-	sort --check requirements-dev.txt
+	$(SORT) --check requirements.txt
+	$(SORT) --check requirements-dev.txt
 
 black-fix:
 	isort $(PYTHON_FILES)
