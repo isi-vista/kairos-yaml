@@ -17,6 +17,18 @@ import yaml
 
 from yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
+
+class StepMapItem(TypedDict):
+    """Typing information for step_map.
+
+    Attributes:
+        id: Step ID.
+        step_idx: Index of step.
+    """
+    id: str
+    step_idx: int
+
+
 ONTOLOGY: Optional[Mapping[str, Any]] = None
 
 
@@ -182,6 +194,92 @@ def get_step_id(step: Step, schema_id: str) -> str:
     return f"{schema_id}/Steps/{step.id}"
 
 
+def create_orders(
+        yaml_data: Schema, schema_id: str, step_map: Mapping[str, StepMapItem]
+) -> Sequence[Mapping[str, Any]]:
+    """Gets orders.
+
+    Args:
+        yaml_data: Data from YAML file.
+        schema_id: Schema ID.
+        step_map: Mapping of steps containing some order information.
+
+    Returns:
+        Orders in SDF format.
+    """
+    step_ids = set(step.id for step in yaml_data.steps)
+    order_tuples: List[Tuple[str, ...]] = []
+    for order in yaml_data.order:
+        if isinstance(order, Before):
+            order_tuples.append((order.before, order.after))
+        elif isinstance(order, Container):
+            order_tuples.append((order.container, order.contained))
+        elif isinstance(order, Overlaps):
+            order_tuples.append(tuple(order.overlaps))
+        else:
+            raise NotImplementedError
+    order_ids = set(itertools.chain.from_iterable(order_tuples))
+    missing_order_ids = order_ids - step_ids
+    if missing_order_ids:
+        for missing_id in missing_order_ids:
+            logging.error(f"The ID '{missing_id}' in `order` is not in `steps`")
+        exit(1)
+
+    base_order_id = f'{schema_id}/Order/'
+    orders = []
+    for order in yaml_data.order:
+        cur_comment = f"\n{order.comment}" if order.comment is not None else ""
+        if isinstance(order, Before):
+            before_idx = step_map[order.before]['step_idx']
+            before_id = step_map[order.before]['id']
+            after_idx = step_map[order.after]['step_idx']
+            after_id = step_map[order.after]['id']
+            if not before_id and not before_idx:
+                logging.warning(f"before: {order.before} does not appear in the steps")
+            if not after_id and not after_idx:
+                logging.warning(f"after: {order.after} does not appear in the steps")
+            cur_order: Mapping[str, Union[str, Sequence[str]]] = {
+                "@id": f"{base_order_id}precede-{before_idx}-{after_idx}",
+                "comment": f"{before_idx} precedes {after_idx}{cur_comment}",
+                "before": before_id,
+                "after": after_id
+            }
+        elif isinstance(order, Container):
+            container_idx = step_map[order.container]['step_idx']
+            container_id = step_map[order.container]['id']
+            contained_idx = step_map[order.contained]['step_idx']
+            contained_id = step_map[order.contained]['id']
+            if not container_id and not container_idx:
+                logging.warning(f"container: {order.container} does not appear in the steps")
+            if not contained_id and not contained_idx:
+                logging.warning(f"contained: {order.contained} does not appear in the steps")
+            cur_order = {
+                "@id": f"{base_order_id}contain-{container_idx}-{contained_idx}",
+                "comment": f"{container_idx} contains {contained_idx}{cur_comment}",
+                "container": container_id,
+                "contained": contained_id
+            }
+        elif isinstance(order, Overlaps):
+            overlaps_idx = []
+            overlaps_id = []
+            for overlap in order.overlaps:
+                overlap_idx = step_map[overlap]['step_idx']
+                overlap_id = step_map[overlap]['id']
+                if not overlap_id and not overlap_idx:
+                    logging.warning(f"overlaps: {overlap_id} does not appear in the steps")
+                overlaps_idx.append(overlap_idx)
+                overlaps_id.append(overlap_id)
+            cur_order = {
+                "@id": f"{base_order_id}overlap-{'-'.join(str(i) for i in overlaps_idx)}",
+                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps{cur_comment}",
+                "overlaps": overlaps_id,
+            }
+        else:
+            raise NotImplementedError
+        orders.append(cur_order)
+    return orders
+
+
 def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     """Converts YAML to SDF.
 
@@ -219,10 +317,6 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     entity_map: MutableMapping[str, Any] = {}
 
     # For order
-    class StepMapItem(TypedDict):
-        id: str
-        step_idx: int
-
     step_map: MutableMapping[str, StepMapItem] = {}
 
     # For naming slot ID
@@ -277,77 +371,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
 
     schema["steps"] = steps
 
-    step_ids = set(step.id for step in yaml_data.steps)
-    order_tuples: List[Tuple[str, ...]] = []
-    for order in yaml_data.order:
-        if isinstance(order, Before):
-            order_tuples.append((order.before, order.after))
-        elif isinstance(order, Container):
-            order_tuples.append((order.container, order.contained))
-        elif isinstance(order, Overlaps):
-            order_tuples.append(tuple(order.overlaps))
-        else:
-            raise NotImplementedError
-    order_ids = set(itertools.chain.from_iterable(order_tuples))
-    missing_order_ids = order_ids - step_ids
-    if missing_order_ids:
-        for missing_id in missing_order_ids:
-            logging.error(f"The ID '{missing_id}' in `order` is not in `steps`")
-        exit(1)
-
-    base_order_id = f'{schema["@id"]}/Order/'
-    orders = []
-    for order in yaml_data.order:
-        cur_comment = f"\n{order.comment}" if order.comment is not None else ""
-        if isinstance(order, Before):
-            before_idx = step_map[order.before]['step_idx']
-            before_id = step_map[order.before]['id']
-            after_idx = step_map[order.after]['step_idx']
-            after_id = step_map[order.after]['id']
-            if not before_id and not before_idx:
-                logging.warning(f"before: {order.before} does not appear in the steps")
-            if not after_id and not after_idx:
-                logging.warning(f"after: {order.after} does not appear in the steps")
-            cur_order: Mapping[str, Union[str, Sequence[str]]] = {
-                "@id": f"{base_order_id}precede-{before_idx}-{after_idx}",
-                "comment": f"{before_idx} precedes {after_idx}{cur_comment}",
-                "before": before_id,
-                "after": after_id
-            }
-        elif isinstance(order, Container):
-            container_idx = step_map[order.container]['step_idx']
-            container_id = step_map[order.container]['id']
-            contained_idx = step_map[order.contained]['step_idx']
-            contained_id = step_map[order.contained]['id']
-            if not container_id and not container_idx:
-                logging.warning(f"container: {order.container} does not appear in the steps")
-            if not contained_id and not contained_idx:
-                logging.warning(f"contained: {order.contained} does not appear in the steps")
-            cur_order = {
-                "@id": f"{base_order_id}contain-{container_idx}-{contained_idx}",
-                "comment": f"{container_idx} contains {contained_idx}{cur_comment}",
-                "container": container_id,
-                "contained": contained_id
-            }
-        elif isinstance(order, Overlaps):
-            overlaps_idx = []
-            overlaps_id = []
-            for overlap in order.overlaps:
-                overlap_idx = step_map[overlap]['step_idx']
-                overlap_id = step_map[overlap]['id']
-                if not overlap_id and not overlap_idx:
-                    logging.warning(f"overlaps: {overlap_id} does not appear in the steps")
-                overlaps_idx.append(overlap_idx)
-                overlaps_id.append(overlap_id)
-            cur_order = {
-                "@id": f"{base_order_id}overlap-{'-'.join(str(i) for i in overlaps_idx)}",
-                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps{cur_comment}",
-                "overlaps": overlaps_id,
-            }
-        else:
-            raise NotImplementedError
-        orders.append(cur_order)
-    schema["order"] = orders
+    schema["order"] = create_orders(yaml_data, schema["@id"], step_map)
 
     # Get entity relations
     entity_map = {x: y for x, y in entity_map.items() if y is not None}
