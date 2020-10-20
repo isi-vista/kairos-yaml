@@ -408,8 +408,8 @@ def merge_schemas(schema_list: Sequence[Mapping[str, Any]], library_id: str) -> 
         Data in JSON output format.
     """
     sdf = {
-        "@context": ["https://kairos-sdf.s3.amazonaws.com/context/kairos-v0.9.jsonld"],
-        "sdfVersion": "0.9",
+        "@context": ["https://kairos-sdf.s3.amazonaws.com/context/kairos-v0.91.jsonld"],
+        "sdfVersion": "0.91",
         "@id": library_id,
         "schemas": schema_list,
     }
