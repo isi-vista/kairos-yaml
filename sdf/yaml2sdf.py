@@ -162,8 +162,7 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id:
         primitive = step_type.split("/")[-1]
         slot.constraints = get_ontology()["events"][primitive]["args"][slot.role]["constraints"]
     constraints = get_slot_constraints(slot.constraints)
-    if constraints:
-        cur_slot["entityTypes"] = constraints
+    cur_slot["entityTypes"] = constraints
     if slot.reference is not None:
         cur_slot["reference"] = slot.reference
 
