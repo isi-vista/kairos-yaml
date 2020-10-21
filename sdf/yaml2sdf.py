@@ -227,7 +227,6 @@ def create_orders(
     base_order_id = f'{schema_id}/Order/'
     orders = []
     for order in yaml_data.order:
-        cur_comment = f"\n{order.comment}" if order.comment is not None else ""
         if isinstance(order, Before):
             before_idx = step_map[order.before]['step_idx']
             before_id = step_map[order.before]['id']
@@ -237,9 +236,9 @@ def create_orders(
                 logging.warning(f"before: {order.before} does not appear in the steps")
             if not after_id and not after_idx:
                 logging.warning(f"after: {order.after} does not appear in the steps")
-            cur_order: Mapping[str, Union[str, Sequence[str]]] = {
+            cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
                 "@id": f"{base_order_id}precede-{before_idx}-{after_idx}",
-                "comment": f"{before_idx} precedes {after_idx}{cur_comment}",
+                "comment": f"{before_idx} precedes {after_idx}",
                 "before": before_id,
                 "after": after_id
             }
@@ -254,7 +253,7 @@ def create_orders(
                 logging.warning(f"contained: {order.contained} does not appear in the steps")
             cur_order = {
                 "@id": f"{base_order_id}contain-{container_idx}-{contained_idx}",
-                "comment": f"{container_idx} contains {contained_idx}{cur_comment}",
+                "comment": f"{container_idx} contains {contained_idx}",
                 "container": container_id,
                 "contained": contained_id
             }
@@ -270,11 +269,14 @@ def create_orders(
                 overlaps_id.append(overlap_id)
             cur_order = {
                 "@id": f"{base_order_id}overlap-{'-'.join(str(i) for i in overlaps_idx)}",
-                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps{cur_comment}",
+                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps",
                 "overlaps": overlaps_id,
             }
         else:
             raise NotImplementedError
+        # isinstance() check will always be True but is needed for mypy
+        if order.comment is not None and isinstance(cur_order["comment"], str):
+            cur_order["comment"] = [cur_order["comment"], order.comment]
         orders.append(cur_order)
     return orders
 
@@ -290,7 +292,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     """
     schema: MutableMapping[str, Any] = {
         "@id": yaml_data.schema_id,
-        "comment": "",
+        "comment": [],
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
         "description": yaml_data.schema_dscpt,
@@ -302,10 +304,10 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
 
     # Get comments
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
-    comments = ["Steps:"] + [f"{idx + 1}. {text}" for idx, text in enumerate(comments)]
+    comments = ["Steps:"] + [f"{idx}. {text}" for idx, text in enumerate(comments, start=1)]
     schema["comment"] = comments
     if yaml_data.comment is not None:
-        schema["comment"] += f"\n{yaml_data.comment}"
+        schema["comment"].append(yaml_data.comment)
 
     # Get steps
     steps = []
@@ -327,7 +329,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
             "comment": comments[idx + 1],
         }
         if step.comment is not None:
-            cur_step["comment"] += "\n" + step.comment
+            cur_step["comment"] = [cur_step["comment"], step.comment]
 
         step_map[step.id] = {"id": cur_step["@id"], "step_idx": idx + 1}
 
