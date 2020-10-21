@@ -289,10 +289,6 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     Returns:
         Schema in SDF format.
     """
-    # assigned_info["schema_name"] = ''.join([' ' + x if x.isupper() else x for x
-    #                                         in assigned_info["schema_id"][len("cmu:"):]]).lstrip()
-    # assigned_info["schema_name"] = assigned_info["schema_name"][0] + \
-    #                                assigned_info["schema_name"][1:].lower()
     schema: MutableMapping[str, Any] = {
         "@id": yaml_data.schema_id,
         "comment": "",
@@ -333,9 +329,6 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
         }
         if step.comment is not None:
             cur_step["comment"] += "\n" + step.comment
-
-        # if "provenance" in step:
-        #     cur_step["provenance"] = step["provenance"]
 
         step_map[step.id] = {"id": cur_step["@id"], "step_idx": idx + 1}
 
