@@ -228,48 +228,28 @@ def create_orders(
     orders = []
     for order in yaml_data.order:
         if isinstance(order, Before):
-            before_idx = step_map[order.before]['step_idx']
             before_id = step_map[order.before]['id']
-            after_idx = step_map[order.after]['step_idx']
             after_id = step_map[order.after]['id']
-            if not before_id and not before_idx:
-                logging.warning(f"before: {order.before} does not appear in the steps")
-            if not after_id and not after_idx:
-                logging.warning(f"after: {order.after} does not appear in the steps")
             cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
-                "@id": f"{base_order_id}precede-{before_idx}-{after_idx}",
-                "comment": f"{before_idx} precedes {after_idx}",
+                "@id": f"{base_order_id}precede-{order.before}-{order.after}",
+                "comment": f"{order.before} precedes {order.after}",
                 "before": before_id,
                 "after": after_id
             }
         elif isinstance(order, Container):
-            container_idx = step_map[order.container]['step_idx']
             container_id = step_map[order.container]['id']
-            contained_idx = step_map[order.contained]['step_idx']
             contained_id = step_map[order.contained]['id']
-            if not container_id and not container_idx:
-                logging.warning(f"container: {order.container} does not appear in the steps")
-            if not contained_id and not contained_idx:
-                logging.warning(f"contained: {order.contained} does not appear in the steps")
             cur_order = {
-                "@id": f"{base_order_id}contain-{container_idx}-{contained_idx}",
-                "comment": f"{container_idx} contains {contained_idx}",
+                "@id": f"{base_order_id}contain-{order.container}-{order.contained}",
+                "comment": f"{order.container} contains {order.contained}",
                 "container": container_id,
                 "contained": contained_id
             }
         elif isinstance(order, Overlaps):
-            overlaps_idx = []
-            overlaps_id = []
-            for overlap in order.overlaps:
-                overlap_idx = step_map[overlap]['step_idx']
-                overlap_id = step_map[overlap]['id']
-                if not overlap_id and not overlap_idx:
-                    logging.warning(f"overlaps: {overlap_id} does not appear in the steps")
-                overlaps_idx.append(overlap_idx)
-                overlaps_id.append(overlap_id)
+            overlaps_id = [step_map[overlap]['id'] for overlap in order.overlaps]
             cur_order = {
-                "@id": f"{base_order_id}overlap-{'-'.join(str(i) for i in overlaps_idx)}",
-                "comment": f"{', '.join(str(i) for i in overlaps_idx)} overlaps",
+                "@id": f"{base_order_id}overlap-{'-'.join(order.overlaps)}",
+                "comment": f"{', '.join(order.overlaps)} overlaps",
                 "overlaps": overlaps_id,
             }
         else:
