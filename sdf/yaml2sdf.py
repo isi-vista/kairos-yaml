@@ -103,13 +103,13 @@ def get_slot_name(slot: Slot, slot_shared: bool) -> str:
 
 
 def get_slot_id(slot: Slot, schema_slot_counter: typing.Counter[str],
-                schema_id: str, slot_shared: bool) -> str:
+                parent_id: str, slot_shared: bool) -> str:
     """Gets slot ID.
 
     Args:
         slot: Slot data.
         schema_slot_counter: Slot counter.
-        schema_id: Schema ID.
+        parent_id: Parent object ID.
         slot_shared: Whether slot is shared.
 
     Returns:
@@ -118,7 +118,7 @@ def get_slot_id(slot: Slot, schema_slot_counter: typing.Counter[str],
     slot_name = get_slot_name(slot, slot_shared)
     slot_id = chr(schema_slot_counter[slot_name] + 97)
     schema_slot_counter[slot_name] += 1
-    return f"{schema_id}/Slots/{slot_name}-{slot_id}"
+    return f"{parent_id}/Slots/{slot_name}-{slot_id}"
 
 
 def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
@@ -318,7 +318,7 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
             slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
 
             slots.append(
-                create_slot(slot, schema_slot_counter, schema["@id"], cur_step["@type"], slot_shared, entity_map))
+                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], slot_shared, entity_map))
 
         cur_step["participants"] = slots
         steps.append(cur_step)
