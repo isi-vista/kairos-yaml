@@ -3,7 +3,7 @@ default:
 
 SHELL=/usr/bin/env bash
 
-PYTHON_FILES=convert_ontology.py sdf/yaml2sdf.py sdf/yaml_schema.py
+PYTHON_FILES=convert_ontology.py sdf/ontology.py sdf/yaml2sdf.py sdf/yaml_schema.py
 YAML_FILES=.prettierrc.yaml
 PRETTIER_FILES=$(YAML_FILES) *.md
 

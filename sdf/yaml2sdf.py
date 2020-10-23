@@ -8,13 +8,14 @@ import logging
 from pathlib import Path
 import random
 import typing
-from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
+from typing import Any, List, Mapping, MutableMapping, Sequence, Tuple, Union
 
 from pydantic import parse_obj_as
 import requests
 from typing_extensions import TypedDict
 import yaml
 
+from ontology import ontology
 from yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 
@@ -27,24 +28,6 @@ class StepMapItem(TypedDict):
     """
     id: str
     step_idx: int
-
-
-ONTOLOGY: Optional[Mapping[str, Any]] = None
-
-
-def get_ontology() -> Mapping[str, Any]:
-    """Loads the ontology from the JSON file.
-
-    Returns:
-        Ontology.
-    """
-    global ONTOLOGY  # pylint: disable=global-statement
-
-    if ONTOLOGY is None:
-        with Path("ontology.json").open() as file:
-            ONTOLOGY = json.load(file)
-
-    return ONTOLOGY
 
 
 def get_step_type(step: Step) -> str:
@@ -62,7 +45,7 @@ def get_step_type(step: Step) -> str:
         primitive_segments.extend(["Unspecified"] * (3 - len(primitive_segments)))
     primitive = ".".join(primitive_segments)
 
-    if primitive not in get_ontology()['events']:
+    if primitive not in ontology['events']:
         logging.warning(f"Primitive '{step.primitive}' in step '{step.id}' not in ontology")
 
     return f"kairos:Primitives/Events/{primitive}"
@@ -78,7 +61,7 @@ def get_slot_role(slot: Slot, step_type: str) -> str:
     Returns:
         Slot role.
     """
-    event_type = get_ontology()['events'].get(step_type.split("/")[-1], None)
+    event_type = ontology['events'].get(step_type.split("/")[-1], None)
     if event_type is not None and slot.role not in event_type['args']:
         logging.warning(f"Role '{slot.role}' is not valid for event '{event_type['type']}'")
 
@@ -134,7 +117,7 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
         Slot constraints.
     """
     for entity in constraints:
-        if entity not in get_ontology()['entities']:
+        if entity not in ontology['entities']:
             logging.warning(f"Entity '{entity}' not in ontology")
 
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
@@ -163,7 +146,7 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id:
 
     if slot.constraints is None:
         primitive = step_type.split("/")[-1]
-        slot.constraints = get_ontology()["events"][primitive]["args"][slot.role]["constraints"]
+        slot.constraints = ontology["events"][primitive]["args"][slot.role]["constraints"]
     constraints = get_slot_constraints(slot.constraints)
     cur_slot["entityTypes"] = constraints
     if slot.reference is not None:
