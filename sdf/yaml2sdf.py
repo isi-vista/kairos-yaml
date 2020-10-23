@@ -45,7 +45,7 @@ def get_step_type(step: Step) -> str:
         primitive_segments.extend(["Unspecified"] * (3 - len(primitive_segments)))
     primitive = ".".join(primitive_segments)
 
-    if primitive not in ontology['events']:
+    if primitive not in ontology.events:
         logging.warning(f"Primitive '{step.primitive}' in step '{step.id}' not in ontology")
 
     return f"kairos:Primitives/Events/{primitive}"
@@ -61,9 +61,9 @@ def get_slot_role(slot: Slot, step_type: str) -> str:
     Returns:
         Slot role.
     """
-    event_type = ontology['events'].get(step_type.split("/")[-1], None)
-    if event_type is not None and slot.role not in event_type['args']:
-        logging.warning(f"Role '{slot.role}' is not valid for event '{event_type['type']}'")
+    event_type = ontology.events.get(step_type.split("/")[-1], None)
+    if event_type is not None and slot.role not in event_type.args:
+        logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.type}'")
 
     return f"{step_type}/Slots/{slot.role}"
 
@@ -117,7 +117,7 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
         Slot constraints.
     """
     for entity in constraints:
-        if entity not in ontology['entities']:
+        if entity not in ontology.entities:
             logging.warning(f"Entity '{entity}' not in ontology")
 
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
@@ -146,7 +146,7 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id:
 
     if slot.constraints is None:
         primitive = step_type.split("/")[-1]
-        slot.constraints = ontology["events"][primitive]["args"][slot.role]["constraints"]
+        slot.constraints = ontology.events[primitive].args[slot.role].constraints
     constraints = get_slot_constraints(slot.constraints)
     cur_slot["entityTypes"] = constraints
     if slot.reference is not None:
