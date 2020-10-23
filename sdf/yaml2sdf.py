@@ -95,8 +95,11 @@ def get_slot_name(slot: Slot, slot_shared: bool) -> str:
     Returns:
         Slot name.
     """
-    name = "".join([' ' + x if x.isupper() else x for x in slot.role]).lstrip()
-    name = name.split()[0].lower()
+    name = slot.role
+    uppercase_indices = [index for index, char in enumerate(name) if char.isupper()]
+    if len(uppercase_indices) > 1:
+        name = name[:uppercase_indices[1]]
+    name = name.lower()
     if slot_shared and slot.refvar is not None:
         name += "-" + slot.refvar
     return name
