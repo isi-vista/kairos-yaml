@@ -2,24 +2,19 @@
 
 import json
 from pathlib import Path
-from typing import Any, Mapping, Optional
-
-ONTOLOGY: Optional[Mapping[str, Any]] = None
+from typing import Any, Mapping
 
 
-def get_ontology() -> Mapping[str, Any]:
+def load_ontology() -> Mapping[str, Any]:
     """Loads the ontology from the JSON file.
 
     Returns:
         Ontology.
     """
-    global ONTOLOGY  # pylint: disable=global-statement
+    with Path("ontology.json").open() as file:
+        ontology_json: Mapping[str, Any] = json.load(file)
 
-    if ONTOLOGY is None:
-        with Path("ontology.json").open() as file:
-            ONTOLOGY = json.load(file)
-
-    return ONTOLOGY
+    return ontology_json
 
 
-ontology = get_ontology()
+ontology = load_ontology()
