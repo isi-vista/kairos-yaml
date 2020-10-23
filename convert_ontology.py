@@ -15,6 +15,7 @@ JsonObject = Mapping[str, Any]
 @enum.unique
 class Sheets(enum.Enum):
     """Enum for sheets and their names."""
+
     EVENTS = "events"
     ENTITIES = "entities"
     RELATIONS = "relations"
@@ -68,10 +69,13 @@ def convert_sheet(sheet: pd.DataFrame, sheet_type: Sheets) -> JsonObject:
 def main() -> None:
     """Converts spreadsheet to formatted JSON."""
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--in-file", type=Path, required=True,
-                   help="Path to input KAIROS ontology Excel spreadsheet.")
-    p.add_argument("--out-file", type=Path, required=True,
-                   help="Path to output JSON.")
+    p.add_argument(
+        "--in-file",
+        type=Path,
+        required=True,
+        help="Path to input KAIROS ontology Excel spreadsheet.",
+    )
+    p.add_argument("--out-file", type=Path, required=True, help="Path to output JSON.")
     args = p.parse_args()
 
     source_file_name = args.in_file.name

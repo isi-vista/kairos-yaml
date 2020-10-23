@@ -3,7 +3,9 @@ default:
 
 SHELL=/usr/bin/env bash
 
-PYTHON_FILES=convert_ontology.py sdf/ontology.py sdf/yaml2sdf.py sdf/yaml_schema.py
+# TODO: Remove Python distinction once everything is Blackened
+NEW_PYTHON_FILES=convert_ontology.py sdf/ontology.py sdf/yaml_schema.py
+PYTHON_FILES=$(NEW_PYTHON_FILES) sdf/yaml2sdf.py
 YAML_FILES=.prettierrc.yaml
 PRETTIER_FILES=$(YAML_FILES) *.md
 
@@ -42,11 +44,11 @@ reqs-check:
 
 black-fix:
 	isort $(PYTHON_FILES)
-	#black $(PYTHON_FILES)
+	black $(NEW_PYTHON_FILES)
 
 black-check:
 	isort --check $(PYTHON_FILES)
-	#black --check $(PYTHON_FILES)
+	black --check $(NEW_PYTHON_FILES)
 
 check: reqs-check black-check flake8 mypy lint docstyle prettier-check yamllint
 
