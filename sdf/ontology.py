@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Mapping, Sequence
 
+import lazy_object_proxy
 from pydantic import BaseModel, Extra
 
 ONTOLOGY_PATH = Path("ontology.json")
@@ -88,4 +89,6 @@ def load_ontology() -> Ontology:
     return Ontology.parse_file(ONTOLOGY_PATH)
 
 
-ontology = load_ontology()
+# Lazy loading is needed to prevent trying to load the ontology
+# when convert_ontology.py has not been run yet
+ontology: Ontology = lazy_object_proxy.Proxy(load_ontology)

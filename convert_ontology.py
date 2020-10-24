@@ -5,11 +5,11 @@ import enum
 import json
 from pathlib import Path
 import re
-from typing import Any, Mapping
+from typing import Mapping, Union
 
 import pandas as pd
 
-JsonObject = Mapping[str, Any]
+from sdf.ontology import Arg, Entity, Ontology, Predicate
 
 
 @enum.unique
@@ -21,7 +21,9 @@ class Sheets(enum.Enum):
     RELATIONS = "relations"
 
 
-def convert_sheet(sheet: pd.DataFrame, sheet_type: Sheets) -> JsonObject:
+def convert_sheet(
+    sheet: pd.DataFrame, sheet_type: Sheets
+) -> Mapping[str, Union[Entity, Predicate]]:
     """Converts spreadsheet events, entities, and relations into a usable format.
 
     Args:
@@ -39,28 +41,30 @@ def convert_sheet(sheet: pd.DataFrame, sheet_type: Sheets) -> JsonObject:
     for row in sheet.iterrows():
         row = row[1]
         if sheet_type == Sheets.ENTITIES:
-            item_type = row["Type"]
+            item_type = str(row["Type"])
         else:
             item_type = ".".join([row["Type"], row["Subtype"], row["Sub-subtype"]])
-        item = {
-            "id": row["AnnotIndexID"],
-            "type": item_type,
-            "definition": row["Definition"],
-        }
-        if sheet_type != Sheets.ENTITIES:
-            item.update(
-                {
-                    "template": row["Template"],
-                    "args": {
-                        row[f"arg{i} label"]: {
-                            "position": f"arg{i}",
-                            "label": row[f"arg{i} label"],
-                            "constraints": row[f"arg{i} type constraints"].upper().split(", "),
-                        }
-                        for i in range(1, max_arg_label_col)
-                        if isinstance(row[f"arg{i} label"], str)
-                    },
-                }
+        if sheet_type == Sheets.ENTITIES:
+            item = Entity(
+                id=row["AnnotIndexID"],
+                type=item_type,
+                definition=row["Definition"],
+            )
+        else:
+            item = Predicate(
+                id=row["AnnotIndexID"],
+                type=item_type,
+                definition=row["Definition"],
+                template=row["Template"],
+                args={
+                    row[f"arg{i} label"]: Arg(
+                        position=f"arg{i}",
+                        label=row[f"arg{i} label"],
+                        constraints=row[f"arg{i} type constraints"].upper().split(", "),
+                    )
+                    for i in range(1, max_arg_label_col)
+                    if isinstance(row[f"arg{i} label"], str)
+                },
             )
         items[item_type] = item
     return items
@@ -85,12 +89,13 @@ def main() -> None:
     entities = convert_sheet(entities_sheet, Sheets.ENTITIES)
     relations_sheet = pd.read_excel(args.in_file, sheet_name=Sheets.RELATIONS.value)
     relations = convert_sheet(relations_sheet, Sheets.RELATIONS)
-    output = {
-        "source_file": source_file_name,
-        "events": events,
-        "entities": entities,
-        "relations": relations,
-    }
+    ontology = Ontology(
+        source_file=source_file_name,
+        events=events,
+        entities=entities,
+        relations=relations,
+    )
+    output = ontology.dict()
 
     with open(args.out_file, "w") as file:
         json.dump(output, file, ensure_ascii=False, indent=2)
