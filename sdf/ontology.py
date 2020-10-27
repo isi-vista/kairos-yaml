@@ -1,7 +1,7 @@
 """Loads ontology for use elsewhere."""
 
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import lazy_object_proxy
 from pydantic import BaseModel, Extra
@@ -79,6 +79,119 @@ class Ontology(InternalBase):
     events: Mapping[str, Predicate]
     entities: Mapping[str, Entity]
     relations: Mapping[str, Predicate]
+
+    # Private fields
+    _event_types: Mapping[str, Mapping[str, Sequence[str]]]
+
+    def dict(self, **kwargs: Any) -> Dict[str, Any]:
+        """See overridden method."""
+        # Used to exclude private fields
+        kwargs["exclude"] = {"_event_types"}
+        return super().dict(**kwargs)
+
+    def _generate_event_tree(self) -> Mapping[str, Mapping[str, Sequence[str]]]:
+        """Generates tree of split event primitives for use by other methods.
+
+        Returns:
+            Tree of event types, subtypes, and subsubtypes.
+        """
+        tree: Dict[str, Dict[str, List[str]]] = {}
+        event_triples = [tuple(e.split(".")) for e in self.events]
+        for event_type, subtype, subsubtype in event_triples:
+            if event_type not in tree:
+                tree[event_type] = {}
+            if subtype not in tree[event_type]:
+                tree[event_type][subtype] = []
+            if subsubtype not in tree[event_type][subtype]:
+                tree[event_type][subtype].append(subsubtype)
+        return tree
+
+    def get_event_subcats(self, event_type: str, subtype: Optional[str] = None) -> Sequence[str]:
+        """Get subcategories for event types and subtypes.
+
+        If only the type is given, allowed subtypes are returned. If the subtype is also given,
+        allowed subsubtypes are returned.
+
+        Args:
+            event_type: Event type.
+            subtype: Event subtype.
+
+        Returns:
+            List of subcategories if any exist, empty list otherwise.
+        """
+        if not hasattr(self, "_event_types"):
+            object.__setattr__(self, "_event_types", self._generate_event_tree())
+
+        if subtype is None:
+            subtypes = self._event_types.get(event_type, None)
+            if subtypes is None:
+                return []
+            else:
+                return sorted(subtypes)
+
+        subsubtypes = self._event_types[event_type].get(subtype, None)
+        if subsubtypes is None:
+            return []
+        else:
+            return sorted(subsubtypes)
+
+    def get_default_event(self, partial_primitive: str) -> Optional[str]:
+        """Converts primitive into a full, three-part primitive.
+
+        Default subtypes and subsubtypes are selected if possible. If there is only a single
+        subcategory, then that subcategory is selected. If "Unspecified" is a subcategory,
+        "Unspecified" is selected. If there is no subcategory selectable by those heuristics,
+        no default exists and None is returned instead. If the primitive is provided complete and
+        in the ontology, then it is returned unchanged.
+
+        Args:
+            partial_primitive: Primitive for completion.
+
+        Returns:
+            Complete primitive if a default exists, None otherwise.
+        """
+        if partial_primitive in self.events:
+            return partial_primitive
+
+        primitive_segments = partial_primitive.split(".")
+
+        if len(primitive_segments) == 1:
+            subtypes = self.get_event_subcats(primitive_segments[0])
+            if len(subtypes) == 1:
+                primitive_segments.append(list(subtypes)[0])
+            elif "Unspecified" in subtypes:
+                primitive_segments.append("Unspecified")
+            else:
+                return None
+
+        if len(primitive_segments) == 2:
+            subsubtypes = self.get_event_subcats(primitive_segments[0], primitive_segments[1])
+            if len(subsubtypes) == 1:
+                primitive_segments.append(list(subsubtypes)[0])
+            elif "Unspecified" in subsubtypes:
+                primitive_segments.append("Unspecified")
+            else:
+                return None
+
+        primitive = ".".join(primitive_segments)
+        if primitive not in self.events:
+            return None
+        return primitive
+
+    def get_event_by_id(self, event_index: int) -> Optional[str]:
+        """Get primitive by its ID number.
+
+        Args:
+            event_index: ID of event.
+
+        Returns:
+            Primitive if ID is valid, None otherwise.
+        """
+        event_list = list(self.events)
+        if 0 < event_index <= len(event_list):
+            return event_list[event_index - 1]
+        else:
+            return None
 
 
 def load_ontology() -> Ontology:

@@ -39,11 +39,7 @@ def get_step_type(step: Step) -> str:
     Returns:
         Step type.
     """
-    # Add missing "Unspecified"s
-    primitive_segments = step.primitive.split(".")
-    if len(primitive_segments) < 3:
-        primitive_segments.extend(["Unspecified"] * (3 - len(primitive_segments)))
-    primitive = ".".join(primitive_segments)
+    primitive = ontology.get_default_event(step.primitive)
 
     if primitive not in ontology.events:
         logging.warning(f"Primitive '{step.primitive}' in step '{step.id}' not in ontology")
