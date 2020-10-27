@@ -15,6 +15,7 @@ class InternalBase(BaseModel):
     class Config:
         """Model configuration."""
 
+        allow_mutation = False
         extra = Extra.forbid
 
 
