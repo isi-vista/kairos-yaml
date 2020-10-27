@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import lazy_object_proxy
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, PrivateAttr
 
 ONTOLOGY_PATH = Path("ontology.json")
 
@@ -81,13 +81,13 @@ class Ontology(InternalBase):
     relations: Mapping[str, Predicate]
 
     # Private fields
-    _event_types: Mapping[str, Mapping[str, Sequence[str]]]
+    _event_types: Mapping[str, Mapping[str, Sequence[str]]] = PrivateAttr()  # type: ignore
 
-    def dict(self, **kwargs: Any) -> Dict[str, Any]:
-        """See overridden method."""
-        # Used to exclude private fields
-        kwargs["exclude"] = {"_event_types"}
-        return super().dict(**kwargs)
+    def __init__(self, **data: Any) -> None:
+        """Instantiate ontology."""
+        # TODO: Fix typing errors
+        super().__init__(**data)  # type: ignore
+        self._event_types = self._generate_event_tree()  # type: ignore
 
     def _generate_event_tree(self) -> Mapping[str, Mapping[str, Sequence[str]]]:
         """Generates tree of split event primitives for use by other methods.
@@ -119,9 +119,6 @@ class Ontology(InternalBase):
         Returns:
             List of subcategories if any exist, empty list otherwise.
         """
-        if not hasattr(self, "_event_types"):
-            object.__setattr__(self, "_event_types", self._generate_event_tree())
-
         if subtype is None:
             subtypes = self._event_types.get(event_type, None)
             if subtypes is None:
