@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 import lazy_object_proxy
 from pydantic import BaseModel, Extra, PrivateAttr
 
-ONTOLOGY_PATH = Path("ontology.json")
+ONTOLOGY_PATH = Path(__file__).parent / "ontology.json"
 
 
 class InternalBase(BaseModel):

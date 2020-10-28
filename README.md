@@ -33,7 +33,7 @@ python -m sdf.yaml2sdf --input-files example.yaml --output-file example.json
 If a new version of the ontology is released, run the following beforehand, substituting in the path to the newest ontology file:
 
 ```bash
-python convert_ontology.py --in-file KAIROS_Annotation_Tagset_Phase_1_V3.0.xlsx --out-file ontology.json
+python convert_ontology.py --in-file KAIROS_Annotation_Tagset_Phase_1_V3.0.xlsx --out-file sdf/ontology.json
 ```
 
 ## Contributing
