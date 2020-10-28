@@ -5,7 +5,7 @@ import enum
 import json
 from pathlib import Path
 import re
-from typing import Mapping, Union
+from typing import Any, Mapping, MutableMapping, Union
 
 import pandas as pd
 
@@ -21,9 +21,7 @@ class Sheets(enum.Enum):
     RELATIONS = "relations"
 
 
-def convert_sheet(
-    sheet: pd.DataFrame, sheet_type: Sheets
-) -> Mapping[str, Union[Entity, Predicate]]:
+def convert_sheet(sheet: pd.DataFrame, sheet_type: Sheets) -> Mapping[str, Any]:
     """Converts spreadsheet events, entities, and relations into a usable format.
 
     Args:
@@ -37,21 +35,19 @@ def convert_sheet(
     arg_label_ints = (int(match.group(1)) for match in arg_label_matches if match is not None)
     max_arg_label_col = max(arg_label_ints, default=0) + 1
 
-    items = {}
+    items: MutableMapping[str, Union[Entity, Predicate]] = {}
     for row in sheet.iterrows():
         row = row[1]
         if sheet_type == Sheets.ENTITIES:
             item_type = str(row["Type"])
-        else:
-            item_type = ".".join([row["Type"], row["Subtype"], row["Sub-subtype"]])
-        if sheet_type == Sheets.ENTITIES:
-            item = Entity(
+            items[item_type] = Entity(
                 id=row["AnnotIndexID"],
                 type=item_type,
                 definition=row["Definition"],
             )
         else:
-            item = Predicate(
+            item_type = ".".join([row["Type"], row["Subtype"], row["Sub-subtype"]])
+            items[item_type] = Predicate(
                 id=row["AnnotIndexID"],
                 type=item_type,
                 definition=row["Definition"],
@@ -66,7 +62,6 @@ def convert_sheet(
                     if isinstance(row[f"arg{i} label"], str)
                 },
             )
-        items[item_type] = item
     return items
 
 

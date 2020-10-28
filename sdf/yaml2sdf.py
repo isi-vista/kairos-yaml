@@ -15,8 +15,8 @@ import requests
 from typing_extensions import TypedDict
 import yaml
 
-from ontology import ontology
-from yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
+from sdf.ontology import ontology
+from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 
 class StepMapItem(TypedDict):

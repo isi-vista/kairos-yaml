@@ -27,7 +27,7 @@ To set up the program environment, run `make install`. Creating a virtualenv bef
 To convert schemas from YAML to JSON, run a command like the following:
 
 ```bash
-python sdf/yaml2sdf.py --input-files example.yaml --output-file example.json
+python -m sdf.yaml2sdf --input-files example.yaml --output-file example.json
 ```
 
 If a new version of the ontology is released, run the following beforehand, substituting in the path to the newest ontology file:
