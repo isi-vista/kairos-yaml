@@ -4,7 +4,7 @@ default:
 SHELL=/usr/bin/env bash
 
 # TODO: Remove Python distinction once everything is Blackened
-NEW_PYTHON_FILES=convert_ontology.py sdf/__init__.py sdf/ontology.py sdf/yaml_schema.py
+NEW_PYTHON_FILES=convert_ontology.py sdf/__init__.py sdf/ontology.py sdf/yaml_schema.py setup.py
 PYTHON_FILES=$(NEW_PYTHON_FILES) sdf/yaml2sdf.py
 YAML_FILES=.prettierrc.yaml
 PRETTIER_FILES=$(YAML_FILES) *.md
