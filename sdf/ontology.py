@@ -87,7 +87,7 @@ class Ontology(InternalBase):
     relations: Mapping[str, Predicate]
 
     # Private fields
-    _event_types: Mapping[str, Mapping[str, Sequence[str]]] = PrivateAttr()  # type: ignore
+    _event_types: Mapping[str, Mapping[str, Sequence[str]]] = PrivateAttr()
 
     def __init__(self, **data: Any) -> None:
         """Instantiate ontology."""
