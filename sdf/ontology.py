@@ -38,14 +38,20 @@ class Predicate(InternalBase):
 
     Attributes:
         id: Predicate ID.
-        type: Predicate name.
+        full_type: Predicate name.
+        type: Predicate type.
+        subtype: Predicate subtype.
+        subsubtype: Predicate subsubtype.
         definition: Definition of predicate.
         template: Template of example predicate usage.
         args: Mapping from argument names to arguments.
     """
 
     id: str
+    full_type: str
     type: str
+    subtype: str
+    subsubtype: str
     definition: str
     template: str
     args: Mapping[str, Arg]

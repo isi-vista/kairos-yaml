@@ -3,7 +3,10 @@
   "events": {
     "ArtifactExistence.DamageDestroyDisableDismantle.Damage": {
       "id": "LDC_KAIROS_evt_001",
-      "type": "ArtifactExistence.DamageDestroyDisableDismantle.Damage",
+      "full_type": "ArtifactExistence.DamageDestroyDisableDismantle.Damage",
+      "type": "ArtifactExistence",
+      "subtype": "DamageDestroyDisableDismantle",
+      "subsubtype": "Damage",
       "definition": "The damaging, but not destruction, of a thing (nb: use Disable or Dismantle instead for those specific kinds of damage)",
       "template": "<arg1> damaged <arg2> using <arg3> instrument in <arg4> place",
       "args": {
@@ -54,7 +57,10 @@
     },
     "ArtifactExistence.DamageDestroyDisableDismantle.Destroy": {
       "id": "LDC_KAIROS_evt_002",
-      "type": "ArtifactExistence.DamageDestroyDisableDismantle.Destroy",
+      "full_type": "ArtifactExistence.DamageDestroyDisableDismantle.Destroy",
+      "type": "ArtifactExistence",
+      "subtype": "DamageDestroyDisableDismantle",
+      "subsubtype": "Destroy",
       "definition": "The destruction of a thing",
       "template": "<arg1> destroyed <arg2> using <arg3> instrument in <arg4> place",
       "args": {
@@ -105,7 +111,10 @@
     },
     "ArtifactExistence.DamageDestroyDisableDismantle.DisableDefuse": {
       "id": "LDC_KAIROS_evt_003",
-      "type": "ArtifactExistence.DamageDestroyDisableDismantle.DisableDefuse",
+      "full_type": "ArtifactExistence.DamageDestroyDisableDismantle.DisableDefuse",
+      "type": "ArtifactExistence",
+      "subtype": "DamageDestroyDisableDismantle",
+      "subsubtype": "DisableDefuse",
       "definition": "Disabling the expected functioning of a mechanical device, or software, for example defusing or removing a fuse from an explosive",
       "template": "<arg1> disabled or defused <arg2> using <arg3> instrument in <arg4> place",
       "args": {
@@ -153,7 +162,10 @@
     },
     "ArtifactExistence.DamageDestroyDisableDismantle.Dismantle": {
       "id": "LDC_KAIROS_evt_004",
-      "type": "ArtifactExistence.DamageDestroyDisableDismantle.Dismantle",
+      "full_type": "ArtifactExistence.DamageDestroyDisableDismantle.Dismantle",
+      "type": "ArtifactExistence",
+      "subtype": "DamageDestroyDisableDismantle",
+      "subsubtype": "Dismantle",
       "definition": "Disassembling an artifact in such a way that it could be reassembled",
       "template": "<arg1> dismantled <arg2> using <arg3> instrument into <arg4> components in <arg5> place",
       "args": {
@@ -205,7 +217,10 @@
     },
     "ArtifactExistence.DamageDestroyDisableDismantle.Unspecified": {
       "id": "LDC_KAIROS_evt_005",
-      "type": "ArtifactExistence.DamageDestroyDisableDismantle.Unspecified",
+      "full_type": "ArtifactExistence.DamageDestroyDisableDismantle.Unspecified",
+      "type": "ArtifactExistence",
+      "subtype": "DamageDestroyDisableDismantle",
+      "subsubtype": "Unspecified",
       "definition": "The damaging or destruction of a thing",
       "template": "<arg1> damaged or destroyed <arg2> using <arg3> instrument in <arg4> place",
       "args": {
@@ -256,7 +271,10 @@
     },
     "ArtifactExistence.ManufactureAssemble.Unspecified": {
       "id": "LDC_KAIROS_evt_006",
-      "type": "ArtifactExistence.ManufactureAssemble.Unspecified",
+      "full_type": "ArtifactExistence.ManufactureAssemble.Unspecified",
+      "type": "ArtifactExistence",
+      "subtype": "ManufactureAssemble",
+      "subsubtype": "Unspecified",
       "definition": "Physical action of building, assembling, manufacturing, putting things together, mixing, etc. (does not include the creation of intellectual property)",
       "template": "<arg1> manufactured or assembled or produced <arg2> from <arg3> components using <arg4> at <arg5> place",
       "args": {
@@ -314,7 +332,10 @@
     },
     "Cognitive.IdentifyCategorize.Unspecified": {
       "id": "LDC_KAIROS_evt_007",
-      "type": "Cognitive.IdentifyCategorize.Unspecified",
+      "full_type": "Cognitive.IdentifyCategorize.Unspecified",
+      "type": "Cognitive",
+      "subtype": "IdentifyCategorize",
+      "subsubtype": "Unspecified",
       "definition": "The act of establishing the identity of an entity or event, or establishing the relevant category that an entity or event belongs to, such as being a suspect or a target or an attack",
       "template": "<arg1> identified <arg2> as <arg3> at <arg4> place",
       "args": {
@@ -383,7 +404,10 @@
     },
     "Cognitive.Inspection.SensoryObserve": {
       "id": "LDC_KAIROS_evt_008",
-      "type": "Cognitive.Inspection.SensoryObserve",
+      "full_type": "Cognitive.Inspection.SensoryObserve",
+      "type": "Cognitive",
+      "subtype": "Inspection",
+      "subsubtype": "SensoryObserve",
       "definition": "An observation or inspection event, with any target of inspection",
       "template": "<arg1> observed <arg2> using <arg3> in <arg4> place",
       "args": {
@@ -440,7 +464,10 @@
     },
     "Cognitive.Research.Unspecified": {
       "id": "LDC_KAIROS_evt_009",
-      "type": "Cognitive.Research.Unspecified",
+      "full_type": "Cognitive.Research.Unspecified",
+      "type": "Cognitive",
+      "subtype": "Research",
+      "subsubtype": "Unspecified",
       "definition": "Explicit mention of researching the answer to a question by analyzing literature or testing hypotheses through experiments or reviewing opinions from experts in a field",
       "template": "<arg1> researched <arg2> subject using <arg3> at <arg4> place",
       "args": {
@@ -506,7 +533,10 @@
     },
     "Cognitive.TeachingTrainingLearning.Unspecified": {
       "id": "LDC_KAIROS_evt_010",
-      "type": "Cognitive.TeachingTrainingLearning.Unspecified",
+      "full_type": "Cognitive.TeachingTrainingLearning.Unspecified",
+      "type": "Cognitive",
+      "subtype": "TeachingTrainingLearning",
+      "subsubtype": "Unspecified",
       "definition": "The action of teaching a person or animal a particular skill or type of behavior, where the learner does not have complete mastery of the skill until the end",
       "template": "<arg1> taught <arg2> field of knowledge to <arg3> using <arg4> at <arg5> institution in <arg6> place",
       "args": {
@@ -566,7 +596,10 @@
     },
     "Conflict.Attack.DetonateExplode": {
       "id": "LDC_KAIROS_evt_011",
-      "type": "Conflict.Attack.DetonateExplode",
+      "full_type": "Conflict.Attack.DetonateExplode",
+      "type": "Conflict",
+      "subtype": "Attack",
+      "subsubtype": "DetonateExplode",
       "definition": "Exploding a device intentionally, as an assault on a person or for physical damage, for the purposes of attack (including bombings)",
       "template": "<arg1> detonated or exploded <arg4> explosive device using <arg3> to attack <arg2> target at <arg5> place",
       "args": {
@@ -626,7 +659,10 @@
     },
     "Conflict.Attack.Unspecified": {
       "id": "LDC_KAIROS_evt_012",
-      "type": "Conflict.Attack.Unspecified",
+      "full_type": "Conflict.Attack.Unspecified",
+      "type": "Conflict",
+      "subtype": "Attack",
+      "subsubtype": "Unspecified",
       "definition": "An attack event, a violent physical act causing harm or damage",
       "template": "<arg1> attacked <arg2> using <arg3> at <arg4> place",
       "args": {
@@ -681,7 +717,10 @@
     },
     "Conflict.Defeat.Unspecified": {
       "id": "LDC_KAIROS_evt_013",
-      "type": "Conflict.Defeat.Unspecified",
+      "full_type": "Conflict.Defeat.Unspecified",
+      "type": "Conflict",
+      "subtype": "Defeat",
+      "subsubtype": "Unspecified",
       "definition": "Defeat in a conflict or an election, but not a game-style competition",
       "template": "<arg1> defeated <arg2> in <arg3> conflict at <arg4> place",
       "args": {
@@ -727,7 +766,10 @@
     },
     "Conflict.Demonstrate.DemonstrateWithViolence": {
       "id": "LDC_KAIROS_evt_014",
-      "type": "Conflict.Demonstrate.DemonstrateWithViolence",
+      "full_type": "Conflict.Demonstrate.DemonstrateWithViolence",
+      "type": "Conflict",
+      "subtype": "Demonstrate",
+      "subsubtype": "DemonstrateWithViolence",
       "definition": "A demonstration, march, protest, riot, or political gathering that includes violent acts by any participant (including police)",
       "template": "<arg1> was in a demonstration involving violence for <arg4> topic with <arg3> visual display against <arg5> at <arg6> place, with potential involvement of <arg2> police or military",
       "args": {
@@ -806,7 +848,10 @@
     },
     "Conflict.Demonstrate.Unspecified": {
       "id": "LDC_KAIROS_evt_015",
-      "type": "Conflict.Demonstrate.Unspecified",
+      "full_type": "Conflict.Demonstrate.Unspecified",
+      "type": "Conflict",
+      "subtype": "Demonstrate",
+      "subsubtype": "Unspecified",
       "definition": "A demonstration, march, protest, or political gathering",
       "template": "<arg1> was in a demonstration for <arg4> topic with <arg3> visual display against <arg5> at <arg6> place, with potential involvement of <arg2> police or military",
       "args": {
@@ -885,7 +930,10 @@
     },
     "Contact.Contact.Broadcast": {
       "id": "LDC_KAIROS_evt_016",
-      "type": "Contact.Contact.Broadcast",
+      "full_type": "Contact.Contact.Broadcast",
+      "type": "Contact",
+      "subtype": "Contact",
+      "subsubtype": "Broadcast",
       "definition": "An event where a participant(s) communicates in a one-way communication without any expectation of response",
       "template": "<arg1> communicated to <arg2> about <arg4> topic using <arg3> at <arg5> place (one-way communication)",
       "args": {
@@ -959,7 +1007,10 @@
     },
     "Contact.Contact.Correspondence": {
       "id": "LDC_KAIROS_evt_017",
-      "type": "Contact.Contact.Correspondence",
+      "full_type": "Contact.Contact.Correspondence",
+      "type": "Contact",
+      "subtype": "Contact",
+      "subsubtype": "Correspondence",
       "definition": "An event where two or more participants communicate in a way that is not in person (e.g. email, phone, etc.)",
       "template": "<arg1> communicated remotely with <arg2> about <arg4> topic using <arg3> at <arg5> place",
       "args": {
@@ -1023,7 +1074,10 @@
     },
     "Contact.Contact.Meet": {
       "id": "LDC_KAIROS_evt_018",
-      "type": "Contact.Contact.Meet",
+      "full_type": "Contact.Contact.Meet",
+      "type": "Contact",
+      "subtype": "Contact",
+      "subsubtype": "Meet",
       "definition": "An event where two or more participants communicate in person",
       "template": "<arg1> met face-to-face with <arg2> about <arg3> topic at <arg4> place",
       "args": {
@@ -1079,7 +1133,10 @@
     },
     "Contact.Contact.Unspecified": {
       "id": "LDC_KAIROS_evt_019",
-      "type": "Contact.Contact.Unspecified",
+      "full_type": "Contact.Contact.Unspecified",
+      "type": "Contact",
+      "subtype": "Contact",
+      "subsubtype": "Unspecified",
       "definition": "An event where two or more participants communicate over any medium, where the context does not distinguish the nature of the contact or whether the communication is in person or remote",
       "template": "<arg1> communicated with <arg2> about <arg3> topic at <arg4> place (document does not specify in person or not, or one-way or not)",
       "args": {
@@ -1135,7 +1192,10 @@
     },
     "Contact.Prevarication.Broadcast": {
       "id": "LDC_KAIROS_evt_020",
-      "type": "Contact.Prevarication.Broadcast",
+      "full_type": "Contact.Prevarication.Broadcast",
+      "type": "Contact",
+      "subtype": "Prevarication",
+      "subsubtype": "Broadcast",
       "definition": "A one-way communication that is knowingly untrue or vague about the truth",
       "template": "<arg1> communicated to <arg2> about <arg4> topic using <arg3> at <arg5> place (one-way communication)",
       "args": {
@@ -1209,7 +1269,10 @@
     },
     "Contact.Prevarication.Correspondence": {
       "id": "LDC_KAIROS_evt_021",
-      "type": "Contact.Prevarication.Correspondence",
+      "full_type": "Contact.Prevarication.Correspondence",
+      "type": "Contact",
+      "subtype": "Prevarication",
+      "subsubtype": "Correspondence",
       "definition": "A two-way communication that is knowingly untrue or vague about the truth, not in person",
       "template": "<arg1> communicated remotely with <arg2> about <arg4> topic using <arg3> at <arg5> place",
       "args": {
@@ -1283,7 +1346,10 @@
     },
     "Contact.Prevarication.Meet": {
       "id": "LDC_KAIROS_evt_022",
-      "type": "Contact.Prevarication.Meet",
+      "full_type": "Contact.Prevarication.Meet",
+      "type": "Contact",
+      "subtype": "Prevarication",
+      "subsubtype": "Meet",
       "definition": "A communication that is knowingly untrue or vague about the truth, made in person",
       "template": "<arg1> met face-to-face with <arg2> about <arg3> topic at <arg4> place",
       "args": {
@@ -1349,7 +1415,10 @@
     },
     "Contact.Prevarication.Unspecified": {
       "id": "LDC_KAIROS_evt_023",
-      "type": "Contact.Prevarication.Unspecified",
+      "full_type": "Contact.Prevarication.Unspecified",
+      "type": "Contact",
+      "subtype": "Prevarication",
+      "subsubtype": "Unspecified",
       "definition": "Any communication over any medium where the communicator intentionally deceives the addressee or continue an ongoing deception, either by knowingly conveying false information, or conveying information with the intent of the addressee drawing the wrong conclusion, or omitting information.",
       "template": "<arg1> communicated with <arg2> about <arg3> topic at <arg4> place (document does not specify in person or not, or one-way or not)",
       "args": {
@@ -1415,7 +1484,10 @@
     },
     "Contact.RequestCommand.Broadcast": {
       "id": "LDC_KAIROS_evt_024",
-      "type": "Contact.RequestCommand.Broadcast",
+      "full_type": "Contact.RequestCommand.Broadcast",
+      "type": "Contact",
+      "subtype": "RequestCommand",
+      "subsubtype": "Broadcast",
       "definition": "A statement making a request, appeal, command, or order via one-way communication",
       "template": "<arg1> communicated to <arg2> about <arg4> topic using <arg3> at <arg5> place (one-way communication)",
       "args": {
@@ -1489,7 +1561,10 @@
     },
     "Contact.RequestCommand.Correspondence": {
       "id": "LDC_KAIROS_evt_025",
-      "type": "Contact.RequestCommand.Correspondence",
+      "full_type": "Contact.RequestCommand.Correspondence",
+      "type": "Contact",
+      "subtype": "RequestCommand",
+      "subsubtype": "Correspondence",
       "definition": "A statement making a request, appeal, command, or order via two-way communication, not in person",
       "template": "<arg1> communicated remotely with <arg2> about <arg4> topic using <arg3> at <arg5> place",
       "args": {
@@ -1563,7 +1638,10 @@
     },
     "Contact.RequestCommand.Meet": {
       "id": "LDC_KAIROS_evt_026",
-      "type": "Contact.RequestCommand.Meet",
+      "full_type": "Contact.RequestCommand.Meet",
+      "type": "Contact",
+      "subtype": "RequestCommand",
+      "subsubtype": "Meet",
       "definition": "A statement making a request, appeal, command, or order made in person",
       "template": "<arg1> met face-to-face with <arg2> about <arg3> topic at <arg4> place",
       "args": {
@@ -1629,7 +1707,10 @@
     },
     "Contact.RequestCommand.Unspecified": {
       "id": "LDC_KAIROS_evt_027",
-      "type": "Contact.RequestCommand.Unspecified",
+      "full_type": "Contact.RequestCommand.Unspecified",
+      "type": "Contact",
+      "subtype": "RequestCommand",
+      "subsubtype": "Unspecified",
       "definition": "A statement making a request, appeal, command, or order, where the context does not distinguish whether the communication is one-way or two-way, or whether it is in person or remote",
       "template": "<arg1> communicated with <arg2> about <arg3> topic at <arg4> place (document does not specify in person or not, or one-way or not)",
       "args": {
@@ -1695,7 +1776,10 @@
     },
     "Contact.ThreatenCoerce.Broadcast": {
       "id": "LDC_KAIROS_evt_028",
-      "type": "Contact.ThreatenCoerce.Broadcast",
+      "full_type": "Contact.ThreatenCoerce.Broadcast",
+      "type": "Contact",
+      "subtype": "ThreatenCoerce",
+      "subsubtype": "Broadcast",
       "definition": "A statement offering threat or coercion via one-way communication",
       "template": "<arg1> communicated to <arg2> about <arg4> topic using <arg3> at <arg5> place (one-way communication)",
       "args": {
@@ -1769,7 +1853,10 @@
     },
     "Contact.ThreatenCoerce.Correspondence": {
       "id": "LDC_KAIROS_evt_029",
-      "type": "Contact.ThreatenCoerce.Correspondence",
+      "full_type": "Contact.ThreatenCoerce.Correspondence",
+      "type": "Contact",
+      "subtype": "ThreatenCoerce",
+      "subsubtype": "Correspondence",
       "definition": "A statement offering threat or coercion via two-way communication, not in person",
       "template": "<arg1> communicated remotely with <arg2> about <arg4> topic using <arg3> at <arg5> place",
       "args": {
@@ -1843,7 +1930,10 @@
     },
     "Contact.ThreatenCoerce.Meet": {
       "id": "LDC_KAIROS_evt_030",
-      "type": "Contact.ThreatenCoerce.Meet",
+      "full_type": "Contact.ThreatenCoerce.Meet",
+      "type": "Contact",
+      "subtype": "ThreatenCoerce",
+      "subsubtype": "Meet",
       "definition": "A statement offering threat or coercion made in person",
       "template": "<arg1> met face-to-face with <arg2> about <arg3> topic at <arg4> place",
       "args": {
@@ -1909,7 +1999,10 @@
     },
     "Contact.ThreatenCoerce.Unspecified": {
       "id": "LDC_KAIROS_evt_031",
-      "type": "Contact.ThreatenCoerce.Unspecified",
+      "full_type": "Contact.ThreatenCoerce.Unspecified",
+      "type": "Contact",
+      "subtype": "ThreatenCoerce",
+      "subsubtype": "Unspecified",
       "definition": "A statement offering threat or coercion, where the context does not distinguish whether the communication is one-way or two-way, or whether it is in person or remote",
       "template": "<arg1> communicated with <arg2> about <arg3> topic at <arg4> place (document does not specify in person or not, or one-way or not)",
       "args": {
@@ -1975,7 +2068,10 @@
     },
     "Control.ImpedeInterfereWith.Unspecified": {
       "id": "LDC_KAIROS_evt_032",
-      "type": "Control.ImpedeInterfereWith.Unspecified",
+      "full_type": "Control.ImpedeInterfereWith.Unspecified",
+      "type": "Control",
+      "subtype": "ImpedeInterfereWith",
+      "subsubtype": "Unspecified",
       "definition": "Explicit mention of an entity knowingly placing obstacles, not necessarily physical, that raise difficulties with respect to the occurrence of a taggable, non-Movement event or process",
       "template": "<arg1> impeded or interfered with <arg2> event at <arg3> place",
       "args": {
@@ -2009,7 +2105,10 @@
     },
     "Disaster.Crash.Unspecified": {
       "id": "LDC_KAIROS_evt_033",
-      "type": "Disaster.Crash.Unspecified",
+      "full_type": "Disaster.Crash.Unspecified",
+      "type": "Disaster",
+      "subtype": "Crash",
+      "subsubtype": "Unspecified",
       "definition": "Vehicular collision or the crashing of any type of vehicle",
       "template": "<arg1> person in <arg2> vehicle crashed into <arg3> at <arg4> place",
       "args": {
@@ -2053,7 +2152,10 @@
     },
     "Disaster.DiseaseOutbreak.Unspecified": {
       "id": "LDC_KAIROS_evt_034",
-      "type": "Disaster.DiseaseOutbreak.Unspecified",
+      "full_type": "Disaster.DiseaseOutbreak.Unspecified",
+      "type": "Disaster",
+      "subtype": "DiseaseOutbreak",
+      "subsubtype": "Unspecified",
       "definition": "Explicit mentions of an outbreak of a disease in an area, region, or country",
       "template": "<arg1> disease broke out among <arg2> victims or population at <arg3> place",
       "args": {
@@ -2089,7 +2191,10 @@
     },
     "Disaster.FireExplosion.Unspecified": {
       "id": "LDC_KAIROS_evt_035",
-      "type": "Disaster.FireExplosion.Unspecified",
+      "full_type": "Disaster.FireExplosion.Unspecified",
+      "type": "Disaster",
+      "subtype": "FireExplosion",
+      "subsubtype": "Unspecified",
       "definition": "A damaging fire or explosion, either natural or caused but without the intent of attacking",
       "template": "<arg1> caught fire or exploded from <arg2> instrument at <arg3> place",
       "args": {
@@ -2129,7 +2234,10 @@
     },
     "GenericCrime.GenericCrime.GenericCrime": {
       "id": "LDC_KAIROS_evt_036",
-      "type": "GenericCrime.GenericCrime.GenericCrime",
+      "full_type": "GenericCrime.GenericCrime.GenericCrime",
+      "type": "GenericCrime",
+      "subtype": "GenericCrime",
+      "subsubtype": "GenericCrime",
       "definition": "For use as the crime argument in a Justice event when the crime event is not taggable as any other annotation ontology event type",
       "template": "<arg1> committed a crime against <arg2> at <arg3> place",
       "args": {
@@ -2167,7 +2275,10 @@
     },
     "Justice.Acquit.Unspecified": {
       "id": "LDC_KAIROS_evt_037",
-      "type": "Justice.Acquit.Unspecified",
+      "full_type": "Justice.Acquit.Unspecified",
+      "type": "Justice",
+      "subtype": "Acquit",
+      "subsubtype": "Unspecified",
       "definition": "An acquit event occurs whenever a trial ends but fails to produce a conviction, including cases where the charges are dropped by the prosecutor",
       "template": "<arg1> court or judge acquitted <arg2> of <arg3> crime in <arg4> place",
       "args": {
@@ -2211,7 +2322,10 @@
     },
     "Justice.ArrestJailDetain.Unspecified": {
       "id": "LDC_KAIROS_evt_038",
-      "type": "Justice.ArrestJailDetain.Unspecified",
+      "full_type": "Justice.ArrestJailDetain.Unspecified",
+      "type": "Justice",
+      "subtype": "ArrestJailDetain",
+      "subsubtype": "Unspecified",
       "definition": "The detention, taking hostage, kidnapping, arrest, or jailing of an individual by government or non-government actors",
       "template": "<arg1> arrested or jailed <arg2> for <arg3> crime at <arg4> place",
       "args": {
@@ -2252,7 +2366,10 @@
     },
     "Justice.ChargeIndict.Unspecified": {
       "id": "LDC_KAIROS_evt_039",
-      "type": "Justice.ChargeIndict.Unspecified",
+      "full_type": "Justice.ChargeIndict.Unspecified",
+      "type": "Justice",
+      "subtype": "ChargeIndict",
+      "subsubtype": "Unspecified",
       "definition": "A government actor charging, accusing, or indicting a person, organization, or GPE of a crime",
       "template": "<arg1> charged or indicted <arg2> before <arg3> court or judge for <arg4> crime in <arg5> place",
       "args": {
@@ -2306,7 +2423,10 @@
     },
     "Justice.Convict.Unspecified": {
       "id": "LDC_KAIROS_evt_040",
-      "type": "Justice.Convict.Unspecified",
+      "full_type": "Justice.Convict.Unspecified",
+      "type": "Justice",
+      "subtype": "Convict",
+      "subsubtype": "Unspecified",
       "definition": "A person, organization or GPE entity is convicted whenever that entity has been found guilty of a crime",
       "template": "<arg1> court or judge convicted <arg2> of <arg3> crime in <arg4> place",
       "args": {
@@ -2350,7 +2470,10 @@
     },
     "Justice.InvestigateCrime.Unspecified": {
       "id": "LDC_KAIROS_evt_041",
-      "type": "Justice.InvestigateCrime.Unspecified",
+      "full_type": "Justice.InvestigateCrime.Unspecified",
+      "type": "Justice",
+      "subtype": "InvestigateCrime",
+      "subsubtype": "Unspecified",
       "definition": "Legal, journalistic, and other investigations of crimes",
       "template": "<arg1> investigated <arg2> for <arg3> crime in <arg4> place",
       "args": {
@@ -2394,7 +2517,10 @@
     },
     "Justice.ReleaseParole.Unspecified": {
       "id": "LDC_KAIROS_evt_042",
-      "type": "Justice.ReleaseParole.Unspecified",
+      "full_type": "Justice.ReleaseParole.Unspecified",
+      "type": "Justice",
+      "subtype": "ReleaseParole",
+      "subsubtype": "Unspecified",
       "definition": "A release-parole event occurs whenever a state actor (GPE, organization subpart, or person representative) ends its custody of a person entity because the sentence has ended, because the charges are dropped, or because parole has been granted",
       "template": "<arg1> court or judge released or paroled <arg2> from <arg3> crime in <arg4> place",
       "args": {
@@ -2438,7 +2564,10 @@
     },
     "Justice.Sentence.Unspecified": {
       "id": "LDC_KAIROS_evt_043",
-      "type": "Justice.Sentence.Unspecified",
+      "full_type": "Justice.Sentence.Unspecified",
+      "type": "Justice",
+      "subtype": "Sentence",
+      "subsubtype": "Unspecified",
       "definition": "A sentence event takes place whenever the punishment, particularly incarceration, for the defendant of a trial event is issued by a state actor",
       "template": "<arg1> court or judge sentenced <arg2> for <arg3> crime to <arg4> sentence in <arg5> place",
       "args": {
@@ -2489,7 +2618,10 @@
     },
     "Justice.TrialHearing.Unspecified": {
       "id": "LDC_KAIROS_evt_044",
-      "type": "Justice.TrialHearing.Unspecified",
+      "full_type": "Justice.TrialHearing.Unspecified",
+      "type": "Justice",
+      "subtype": "TrialHearing",
+      "subsubtype": "Unspecified",
       "definition": "A trial event occurs whenever a court proceeding has been initiated for the purposes of determining the guilt or innocence of a person, organization or GPE accused of committing a crime. A hearing event occurs whenever a state actor (GPE, organization subpart, or person representative) officially gathers to discuss some criminal legal matter.",
       "template": "<arg1> tried <arg2> before <arg3> court or judge for <arg4> crime in <arg5> place",
       "args": {
@@ -2543,7 +2675,10 @@
     },
     "Life.Consume.Unspecified": {
       "id": "LDC_KAIROS_evt_045",
-      "type": "Life.Consume.Unspecified",
+      "full_type": "Life.Consume.Unspecified",
+      "type": "Life",
+      "subtype": "Consume",
+      "subsubtype": "Unspecified",
       "definition": "An person or animal takes a substance into their body",
       "template": "<arg1> consumed <arg2> at <arg3> place",
       "args": {
@@ -2575,7 +2710,10 @@
     },
     "Life.Die.Unspecified": {
       "id": "LDC_KAIROS_evt_046",
-      "type": "Life.Die.Unspecified",
+      "full_type": "Life.Die.Unspecified",
+      "type": "Life",
+      "subtype": "Die",
+      "subsubtype": "Unspecified",
       "definition": "The death of a person or animal",
       "template": "<arg1> died at <arg2> place from <arg4> medical issue, killed by <arg3> killer",
       "args": {
@@ -2618,7 +2756,10 @@
     },
     "Life.Illness.Unspecified": {
       "id": "LDC_KAIROS_evt_047",
-      "type": "Life.Illness.Unspecified",
+      "full_type": "Life.Illness.Unspecified",
+      "type": "Life",
+      "subtype": "Illness",
+      "subsubtype": "Unspecified",
       "definition": "A person or animal experiencing physical harm due to sickness or illness",
       "template": "<arg1> has <arg3> sickness or illness at <arg4> place, deliberately infected by <arg2>",
       "args": {
@@ -2660,7 +2801,10 @@
     },
     "Life.Infect.Unspecified": {
       "id": "LDC_KAIROS_evt_048",
-      "type": "Life.Infect.Unspecified",
+      "full_type": "Life.Infect.Unspecified",
+      "type": "Life",
+      "subtype": "Infect",
+      "subsubtype": "Unspecified",
       "definition": "A person or animal is infected with a pathogen",
       "template": "<arg1> was infected with <arg2> from <arg3> at <arg4> place",
       "args": {
@@ -2715,7 +2859,10 @@
     },
     "Life.Injure.Unspecified": {
       "id": "LDC_KAIROS_evt_049",
-      "type": "Life.Injure.Unspecified",
+      "full_type": "Life.Injure.Unspecified",
+      "type": "Life",
+      "subtype": "Injure",
+      "subsubtype": "Unspecified",
       "definition": "The physical injuring of a person or animal",
       "template": "<arg1> was injured by <arg2> using <arg3> in <arg4> body part with <arg5> medical issue at <arg6> place",
       "args": {
@@ -2777,7 +2924,10 @@
     },
     "Medical.Diagnosis.Unspecified": {
       "id": "LDC_KAIROS_evt_050",
-      "type": "Medical.Diagnosis.Unspecified",
+      "full_type": "Medical.Diagnosis.Unspecified",
+      "type": "Medical",
+      "subtype": "Diagnosis",
+      "subsubtype": "Unspecified",
       "definition": "A determination of the disease or medical condition that explains a person's or animal's symptoms and signs",
       "template": "<arg1> treater diagnosed <arg2> patient with <arg3> symptom for <arg4> medical issue at <arg5> place",
       "args": {
@@ -2826,7 +2976,10 @@
     },
     "Medical.Intervention.Unspecified": {
       "id": "LDC_KAIROS_evt_051",
-      "type": "Medical.Intervention.Unspecified",
+      "full_type": "Medical.Intervention.Unspecified",
+      "type": "Medical",
+      "subtype": "Intervention",
+      "subsubtype": "Unspecified",
       "definition": "Any kind of medical treatment or intervention for a person or an animal, often following a diagnosis of a medical condition",
       "template": "<arg1> treater treated <arg2> patient for <arg3> medical issue with <arg4> means at <arg5> place",
       "args": {
@@ -2875,7 +3028,10 @@
     },
     "Medical.Vaccinate.Unspecified": {
       "id": "LDC_KAIROS_evt_052",
-      "type": "Medical.Vaccinate.Unspecified",
+      "full_type": "Medical.Vaccinate.Unspecified",
+      "type": "Medical",
+      "subtype": "Vaccinate",
+      "subsubtype": "Unspecified",
       "definition": "A person or an animal is inoculated against a disease",
       "template": "<arg1> treater vaccinated <arg2> patient via <arg4> vaccination method for <arg3> medical issue at <arg5> place",
       "args": {
@@ -2924,7 +3080,10 @@
     },
     "Movement.Transportation.Evacuation": {
       "id": "LDC_KAIROS_evt_053",
-      "type": "Movement.Transportation.Evacuation",
+      "full_type": "Movement.Transportation.Evacuation",
+      "type": "Movement",
+      "subtype": "Transportation",
+      "subsubtype": "Evacuation",
       "definition": "The movement of a person or animal (by an agent or via their own effort) from one place to another for evacuation purposes",
       "template": "<arg1> transported <arg2> in <arg3> from <arg4> place to <arg5> place",
       "args": {
@@ -2979,7 +3138,10 @@
     },
     "Movement.Transportation.GrantAllowPassage": {
       "id": "LDC_KAIROS_evt_054",
-      "type": "Movement.Transportation.GrantAllowPassage",
+      "full_type": "Movement.Transportation.GrantAllowPassage",
+      "type": "Movement",
+      "subtype": "Transportation",
+      "subsubtype": "GrantAllowPassage",
       "definition": "Explicit mention of granting or allowing entry or exit from a location",
       "template": "<arg4> grants <arg1> entry to <arg6> place from <arg5> place to transport <arg2> using <arg3> vehicle",
       "args": {
@@ -3055,7 +3217,10 @@
     },
     "Movement.Transportation.IllegalTransportation": {
       "id": "LDC_KAIROS_evt_055",
-      "type": "Movement.Transportation.IllegalTransportation",
+      "full_type": "Movement.Transportation.IllegalTransportation",
+      "type": "Movement",
+      "subtype": "Transportation",
+      "subsubtype": "IllegalTransportation",
       "definition": "Explicit mention of illegal physical transporting of people or things between places, such as smuggling, trafficking, illegal border crossings",
       "template": "<arg1> illegally transported <arg2> in <arg3> from <arg4> place to <arg5> place",
       "args": {
@@ -3121,7 +3286,10 @@
     },
     "Movement.Transportation.PreventPassage": {
       "id": "LDC_KAIROS_evt_056",
-      "type": "Movement.Transportation.PreventPassage",
+      "full_type": "Movement.Transportation.PreventPassage",
+      "type": "Movement",
+      "subtype": "Transportation",
+      "subsubtype": "PreventPassage",
       "definition": "Explicit mention of preventing entry or exit from a location",
       "template": "<arg4> prevents <arg1> from entering <arg6> place from <arg5> place to transport <arg2> using <arg3> vehicle",
       "args": {
@@ -3197,7 +3365,10 @@
     },
     "Movement.Transportation.Unspecified": {
       "id": "LDC_KAIROS_evt_057",
-      "type": "Movement.Transportation.Unspecified",
+      "full_type": "Movement.Transportation.Unspecified",
+      "type": "Movement",
+      "subtype": "Transportation",
+      "subsubtype": "Unspecified",
       "definition": "Physical movement or transportation of a person or artifact between places, includes putting and placing objects in locations",
       "template": "<arg1> transported <arg2> in <arg3> from <arg4> place to <arg5> place",
       "args": {
@@ -3263,7 +3434,10 @@
     },
     "Personnel.ChangePosition.ChangeJobLocation": {
       "id": "LDC_KAIROS_evt_058",
-      "type": "Personnel.ChangePosition.ChangeJobLocation",
+      "full_type": "Personnel.ChangePosition.ChangeJobLocation",
+      "type": "Personnel",
+      "subtype": "ChangePosition",
+      "subsubtype": "ChangeJobLocation",
       "definition": "A person continuing in the same role in a different location in the same organization",
       "template": "<arg1> changed job locations at <arg2> organization from <arg3> old location of organization to <arg4> new location of organization",
       "args": {
@@ -3302,7 +3476,10 @@
     },
     "Personnel.ChangePosition.Demotion": {
       "id": "LDC_KAIROS_evt_059",
-      "type": "Personnel.ChangePosition.Demotion",
+      "full_type": "Personnel.ChangePosition.Demotion",
+      "type": "Personnel",
+      "subtype": "ChangePosition",
+      "subsubtype": "Demotion",
       "definition": "A person being demoted from a position to a lower position in the same organization",
       "template": "<arg1> was demoted at <arg2> organization from <arg3> old position to <arg4> new position  in <arg5> place",
       "args": {
@@ -3348,7 +3525,10 @@
     },
     "Personnel.ChangePosition.Lateral": {
       "id": "LDC_KAIROS_evt_060",
-      "type": "Personnel.ChangePosition.Lateral",
+      "full_type": "Personnel.ChangePosition.Lateral",
+      "type": "Personnel",
+      "subtype": "ChangePosition",
+      "subsubtype": "Lateral",
       "definition": "A person changing from one position to another with equal status in the same organization",
       "template": "<arg1> changed working positions laterally at <arg2> organization from <arg3> old position to <arg4> new position  in <arg5> place",
       "args": {
@@ -3394,7 +3574,10 @@
     },
     "Personnel.ChangePosition.Promotion": {
       "id": "LDC_KAIROS_evt_061",
-      "type": "Personnel.ChangePosition.Promotion",
+      "full_type": "Personnel.ChangePosition.Promotion",
+      "type": "Personnel",
+      "subtype": "ChangePosition",
+      "subsubtype": "Promotion",
       "definition": "A person being promoted from a position to a higher position in the same organization",
       "template": "<arg1> was promoted at <arg2> organization from <arg3> old position to <arg4> new position  in <arg5> place",
       "args": {
@@ -3440,7 +3623,10 @@
     },
     "Personnel.ChangePosition.Unspecified": {
       "id": "LDC_KAIROS_evt_062",
-      "type": "Personnel.ChangePosition.Unspecified",
+      "full_type": "Personnel.ChangePosition.Unspecified",
+      "type": "Personnel",
+      "subtype": "ChangePosition",
+      "subsubtype": "Unspecified",
       "definition": "A person changing from one position to another in the same organization, with no indication of relative levels of the positions",
       "template": "<arg1> changed working positions at <arg2> organization from <arg3> old position to <arg4> new position  in <arg5> place",
       "args": {
@@ -3486,7 +3672,10 @@
     },
     "Personnel.EndPosition.Unspecified": {
       "id": "LDC_KAIROS_evt_063",
-      "type": "Personnel.EndPosition.Unspecified",
+      "full_type": "Personnel.EndPosition.Unspecified",
+      "type": "Personnel",
+      "subtype": "EndPosition",
+      "subsubtype": "Unspecified",
       "definition": "A person stopping working in a position, with no indication that they are changing positions within the same organization",
       "template": "<arg1> stopped working in <arg3> position at <arg2> organization in <arg4> place",
       "args": {
@@ -3525,7 +3714,10 @@
     },
     "Personnel.StartPosition.Unspecified": {
       "id": "LDC_KAIROS_evt_064",
-      "type": "Personnel.StartPosition.Unspecified",
+      "full_type": "Personnel.StartPosition.Unspecified",
+      "type": "Personnel",
+      "subtype": "StartPosition",
+      "subsubtype": "Unspecified",
       "definition": "A person starting working in a position, with no indication that they are changing positions within the same organization",
       "template": "<arg1> started working in <arg3> position at <arg2> organization in <arg4> place",
       "args": {
@@ -3564,7 +3756,10 @@
     },
     "Transaction.AidBetweenGovernments.Unspecified": {
       "id": "LDC_KAIROS_evt_065",
-      "type": "Transaction.AidBetweenGovernments.Unspecified",
+      "full_type": "Transaction.AidBetweenGovernments.Unspecified",
+      "type": "Transaction",
+      "subtype": "AidBetweenGovernments",
+      "subsubtype": "Unspecified",
       "definition": "A voluntary transfer of resources from one GPE to another from the perspective of governments, often with strings attached",
       "template": "<arg1> government gave <arg4> aid to <arg2> government for the benefit of <arg3> at <arg5> place",
       "args": {
@@ -3622,7 +3817,10 @@
     },
     "Transaction.Donation.Unspecified": {
       "id": "LDC_KAIROS_evt_066",
-      "type": "Transaction.Donation.Unspecified",
+      "full_type": "Transaction.Donation.Unspecified",
+      "type": "Transaction",
+      "subtype": "Donation",
+      "subsubtype": "Unspecified",
       "definition": "The voluntary provision, donation, or extension of material aid in the form of assets or commodities (nb: use AidBetweenGovernments instead for GPE to GPE donations)",
       "template": "<arg1> gave <arg4> to <arg2> for the benefit of <arg3> at <arg5> place",
       "args": {
@@ -3686,7 +3884,10 @@
     },
     "Transaction.ExchangeBuySell.Unspecified": {
       "id": "LDC_KAIROS_evt_067",
-      "type": "Transaction.ExchangeBuySell.Unspecified",
+      "full_type": "Transaction.ExchangeBuySell.Unspecified",
+      "type": "Transaction",
+      "subtype": "ExchangeBuySell",
+      "subsubtype": "Unspecified",
       "definition": "A transaction transferring or obtaining money, ownership, possession, or control of something, applicable to any type, nature, or method of acquisition including barter",
       "template": "<arg1> bought, sold, or traded <arg3> to <arg2> in exchange for <arg4> for the benefit of <arg5> at <arg6> place",
       "args": {
@@ -3897,7 +4098,10 @@
   "relations": {
     "Evaluate.Belief.CommittedBelief": {
       "id": "LDC_KAIROS_rel_001",
-      "type": "Evaluate.Belief.CommittedBelief",
+      "full_type": "Evaluate.Belief.CommittedBelief",
+      "type": "Evaluate",
+      "subtype": "Belief",
+      "subsubtype": "CommittedBelief",
       "definition": "Explicit mention of an entity believing with certainty that an event or information object is true",
       "template": "<arg1> believes with certainty that <arg2> is true",
       "args": {
@@ -3923,7 +4127,10 @@
     },
     "Evaluate.Belief.NonCommittedBelief": {
       "id": "LDC_KAIROS_rel_002",
-      "type": "Evaluate.Belief.NonCommittedBelief",
+      "full_type": "Evaluate.Belief.NonCommittedBelief",
+      "type": "Evaluate",
+      "subtype": "Belief",
+      "subsubtype": "NonCommittedBelief",
       "definition": "Explicit mention of an entity believing an event or information object is possibly but not necessarily true; they do not have a strong belief in it",
       "template": "<arg1> believes <arg2> is possibly but not necessarily true",
       "args": {
@@ -3949,7 +4156,10 @@
     },
     "Evaluate.Intent.Intent": {
       "id": "LDC_KAIROS_rel_003",
-      "type": "Evaluate.Intent.Intent",
+      "full_type": "Evaluate.Intent.Intent",
+      "type": "Evaluate",
+      "subtype": "Intent",
+      "subsubtype": "Intent",
       "definition": "Explicit mention of an entity intending a future event or planning or attempting to achieve it",
       "template": "<arg1> intends, plans for, or attempts <arg2> event",
       "args": {
@@ -3975,7 +4185,10 @@
     },
     "Evaluate.Sentiment.Negative": {
       "id": "LDC_KAIROS_rel_004",
-      "type": "Evaluate.Sentiment.Negative",
+      "full_type": "Evaluate.Sentiment.Negative",
+      "type": "Evaluate",
+      "subtype": "Sentiment",
+      "subsubtype": "Negative",
       "definition": "Negative sentiment held by a person, organization, or GPE toward any knowledge element",
       "template": "<arg1> holds negative sentiment towards <arg2>",
       "args": {
@@ -4023,7 +4236,10 @@
     },
     "Evaluate.Sentiment.Positive": {
       "id": "LDC_KAIROS_rel_005",
-      "type": "Evaluate.Sentiment.Positive",
+      "full_type": "Evaluate.Sentiment.Positive",
+      "type": "Evaluate",
+      "subtype": "Sentiment",
+      "subsubtype": "Positive",
       "definition": "Positive sentiment held by a person, organization, or GPE toward any knowledge element",
       "template": "<arg1> holds positive sentiment towards <arg2>",
       "args": {
@@ -4071,7 +4287,10 @@
     },
     "Evaluate.Status.HoaxFraud": {
       "id": "LDC_KAIROS_rel_006",
-      "type": "Evaluate.Status.HoaxFraud",
+      "full_type": "Evaluate.Status.HoaxFraud",
+      "type": "Evaluate",
+      "subtype": "Status",
+      "subsubtype": "HoaxFraud",
       "definition": "Explicit mentions asserting that an event or a thing is a hoax or fraud",
       "template": "<arg1> holds that <arg2> is a hoax or a fraud",
       "args": {
@@ -4119,7 +4338,10 @@
     },
     "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.ControlTerritory": {
       "id": "LDC_KAIROS_rel_007",
-      "type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.ControlTerritory",
+      "full_type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.ControlTerritory",
+      "type": "GeneralAffiliation",
+      "subtype": "ArtifactPoliticalOrganizationReligiousAffiliation",
+      "subsubtype": "ControlTerritory",
       "definition": "A side, person, organization, location, or GPE controlling territory.",
       "template": "<arg1> is controlled by <arg2>",
       "args": {
@@ -4147,7 +4369,10 @@
     },
     "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.NationalityCitizen": {
       "id": "LDC_KAIROS_rel_008",
-      "type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.NationalityCitizen",
+      "full_type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.NationalityCitizen",
+      "type": "GeneralAffiliation",
+      "subtype": "ArtifactPoliticalOrganizationReligiousAffiliation",
+      "subsubtype": "NationalityCitizen",
       "definition": "The affiliation between an artifact (including vehicles, weapons, commodities, etc.) and a GPE.  Artifact-Political-Organization-Religious-Affiliation (APORA).",
       "template": "<arg1> is affiliated with <arg2> GPE",
       "args": {
@@ -4177,7 +4402,10 @@
     },
     "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.OwnershipPossession": {
       "id": "LDC_KAIROS_rel_009",
-      "type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.OwnershipPossession",
+      "full_type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.OwnershipPossession",
+      "type": "GeneralAffiliation",
+      "subtype": "ArtifactPoliticalOrganizationReligiousAffiliation",
+      "subsubtype": "OwnershipPossession",
       "definition": "The ownership or possession of an artifact (including vehicles, weapons, commodities, etc.) by a person, group, or side.  Artifact-Political-Organization-Religious-Affiliation (APORA).",
       "template": "<arg1> is owned by <arg2>",
       "args": {
@@ -4211,7 +4439,10 @@
     },
     "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.Unspecified": {
       "id": "LDC_KAIROS_rel_010",
-      "type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.Unspecified",
+      "full_type": "GeneralAffiliation.ArtifactPoliticalOrganizationReligiousAffiliation.Unspecified",
+      "type": "GeneralAffiliation",
+      "subtype": "ArtifactPoliticalOrganizationReligiousAffiliation",
+      "subsubtype": "Unspecified",
       "definition": "The affiliation between an artifact (including vehicles, weapons, commodities, etc.) and another entity.  Artifact-Political-Organization-Religious-Affiliation (APORA).",
       "template": "<arg1> is affiliated with <arg2>",
       "args": {
@@ -4246,7 +4477,10 @@
     },
     "GeneralAffiliation.MemberOriginReligionEthnicity.Ethnicity": {
       "id": "LDC_KAIROS_rel_011",
-      "type": "GeneralAffiliation.MemberOriginReligionEthnicity.Ethnicity",
+      "full_type": "GeneralAffiliation.MemberOriginReligionEthnicity.Ethnicity",
+      "type": "GeneralAffiliation",
+      "subtype": "MemberOriginReligionEthnicity",
+      "subsubtype": "Ethnicity",
       "definition": "The affiliation between a person entity and an ethnicity.  Member-Origin-Religion-Ethnicity (MORE)",
       "template": "<arg1> has <arg2> ethnicity",
       "args": {
@@ -4271,7 +4505,10 @@
     },
     "GeneralAffiliation.MemberOriginReligionEthnicity.NationalityCitizen": {
       "id": "LDC_KAIROS_rel_012",
-      "type": "GeneralAffiliation.MemberOriginReligionEthnicity.NationalityCitizen",
+      "full_type": "GeneralAffiliation.MemberOriginReligionEthnicity.NationalityCitizen",
+      "type": "GeneralAffiliation",
+      "subtype": "MemberOriginReligionEthnicity",
+      "subsubtype": "NationalityCitizen",
       "definition": "The affiliation between a person entity and a GPE.  Member-Origin-Religion-Ethnicity (MORE)",
       "template": "<arg1> is affiliated with <arg2> GPE",
       "args": {
@@ -4293,7 +4530,10 @@
     },
     "GeneralAffiliation.MemberOriginReligionEthnicity.Unspecified": {
       "id": "LDC_KAIROS_rel_013",
-      "type": "GeneralAffiliation.MemberOriginReligionEthnicity.Unspecified",
+      "full_type": "GeneralAffiliation.MemberOriginReligionEthnicity.Unspecified",
+      "type": "GeneralAffiliation",
+      "subtype": "MemberOriginReligionEthnicity",
+      "subsubtype": "Unspecified",
       "definition": "The affiliation between a person entity and another entity.  Member-Origin-Religion-Ethnicity (MORE)",
       "template": "<arg1> is affiliated with <arg2>",
       "args": {
@@ -4319,7 +4559,10 @@
     },
     "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.NationalityCitizen": {
       "id": "LDC_KAIROS_rel_014",
-      "type": "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.NationalityCitizen",
+      "full_type": "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.NationalityCitizen",
+      "type": "GeneralAffiliation",
+      "subtype": "OrganizationPoliticalReligiousAffiliation",
+      "subsubtype": "NationalityCitizen",
       "definition": "The affiliation between an organization entity and a GPE.  Organization-Political-Religious-Affiliation (OPRA)",
       "template": "<arg1> is affiliated with <arg2> GPE",
       "args": {
@@ -4341,7 +4584,10 @@
     },
     "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.Unspecified": {
       "id": "LDC_KAIROS_rel_015",
-      "type": "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.Unspecified",
+      "full_type": "GeneralAffiliation.OrganizationPoliticalReligiousAffiliation.Unspecified",
+      "type": "GeneralAffiliation",
+      "subtype": "OrganizationPoliticalReligiousAffiliation",
+      "subsubtype": "Unspecified",
       "definition": "The affiliation between an organization entity and another entity.  Organization-Political-Religious-Affiliation (OPRA)",
       "template": "<arg1> is affiliated with <arg2>",
       "args": {
@@ -4367,7 +4613,10 @@
     },
     "GeneralAffiliation.OrganizationWebsite.OrganizationWebsite": {
       "id": "LDC_KAIROS_rel_016",
-      "type": "GeneralAffiliation.OrganizationWebsite.OrganizationWebsite",
+      "full_type": "GeneralAffiliation.OrganizationWebsite.OrganizationWebsite",
+      "type": "GeneralAffiliation",
+      "subtype": "OrganizationWebsite",
+      "subsubtype": "OrganizationWebsite",
       "definition": "An official top level URL for an organization entity’s website",
       "template": "<arg1> has <arg2> website",
       "args": {
@@ -4389,7 +4638,10 @@
     },
     "GeneralAffiliation.Sponsorship.Unspecified": {
       "id": "LDC_KAIROS_rel_017",
-      "type": "GeneralAffiliation.Sponsorship.Unspecified",
+      "full_type": "GeneralAffiliation.Sponsorship.Unspecified",
+      "type": "GeneralAffiliation",
+      "subtype": "Sponsorship",
+      "subsubtype": "Unspecified",
       "definition": "The sponsorship of an event by a one-step removed sponsor (or several steps removed, the man-behind-the-curtain, or more likely the country behind the curtain)",
       "template": "<arg1> event is sponsored by <arg2>",
       "args": {
@@ -4414,7 +4666,10 @@
     },
     "Information.Color.Color": {
       "id": "LDC_KAIROS_rel_018",
-      "type": "Information.Color.Color",
+      "full_type": "Information.Color.Color",
+      "type": "Information",
+      "subtype": "Color",
+      "subsubtype": "Color",
       "definition": "The relation between an entity or thing and a color (string)",
       "template": "<arg1> has color <arg2>",
       "args": {
@@ -4445,7 +4700,10 @@
     },
     "Information.Make.Make": {
       "id": "LDC_KAIROS_rel_019",
-      "type": "Information.Make.Make",
+      "full_type": "Information.Make.Make",
+      "type": "Information",
+      "subtype": "Make",
+      "subsubtype": "Make",
       "definition": "The relation between a thing (such as an artifact, vehicle, or weapon) and its make or brand (string)",
       "template": "<arg1> has make/brand <arg2>",
       "args": {
@@ -4477,7 +4735,10 @@
     },
     "Measurement.Size.Count": {
       "id": "LDC_KAIROS_rel_020",
-      "type": "Measurement.Size.Count",
+      "full_type": "Measurement.Size.Count",
+      "type": "Measurement",
+      "subtype": "Size",
+      "subsubtype": "Count",
       "definition": "Numerical totals of a countable entity or filler",
       "template": "<arg1> is the count/number of <arg2>",
       "args": {
@@ -4518,7 +4779,10 @@
     },
     "Measurement.Size.HeightLengthWidth": {
       "id": "LDC_KAIROS_rel_021",
-      "type": "Measurement.Size.HeightLengthWidth",
+      "full_type": "Measurement.Size.HeightLengthWidth",
+      "type": "Measurement",
+      "subtype": "Size",
+      "subsubtype": "HeightLengthWidth",
       "definition": "Numerical value of a dimension of an entity or filler",
       "template": "<arg1> is the height/length/width of <arg2>",
       "args": {
@@ -4554,7 +4818,10 @@
     },
     "Measurement.Size.Percentage": {
       "id": "LDC_KAIROS_rel_022",
-      "type": "Measurement.Size.Percentage",
+      "full_type": "Measurement.Size.Percentage",
+      "type": "Measurement",
+      "subtype": "Size",
+      "subsubtype": "Percentage",
       "definition": "Percentage value of an entity or filler (such as results)",
       "template": "<arg1> is the percentage of <arg2>",
       "args": {
@@ -4595,7 +4862,10 @@
     },
     "Measurement.Size.Unspecified": {
       "id": "LDC_KAIROS_rel_023",
-      "type": "Measurement.Size.Unspecified",
+      "full_type": "Measurement.Size.Unspecified",
+      "type": "Measurement",
+      "subtype": "Size",
+      "subsubtype": "Unspecified",
       "definition": "Numerical value of the size of an entity or filler, not otherwise specified",
       "template": "<arg1> is the size of <arg2>",
       "args": {
@@ -4629,7 +4899,10 @@
     },
     "Measurement.Size.Weight": {
       "id": "LDC_KAIROS_rel_024",
-      "type": "Measurement.Size.Weight",
+      "full_type": "Measurement.Size.Weight",
+      "type": "Measurement",
+      "subtype": "Size",
+      "subsubtype": "Weight",
       "definition": "Numerical value of the weight of an entity or filler",
       "template": "<arg1> is the weight of <arg2>",
       "args": {
@@ -4664,7 +4937,10 @@
     },
     "OrganizationAffiliation.EmploymentMembership.Employment": {
       "id": "LDC_KAIROS_rel_025",
-      "type": "OrganizationAffiliation.EmploymentMembership.Employment",
+      "full_type": "OrganizationAffiliation.EmploymentMembership.Employment",
+      "type": "OrganizationAffiliation",
+      "subtype": "EmploymentMembership",
+      "subsubtype": "Employment",
       "definition": "The relationship between a person and the organization or GPE of which the agent is an employee, or with which the agent has a contractual business or service agreement",
       "template": "<arg1> is employed by <arg2>",
       "args": {
@@ -4687,7 +4963,10 @@
     },
     "OrganizationAffiliation.EmploymentMembership.Membership": {
       "id": "LDC_KAIROS_rel_026",
-      "type": "OrganizationAffiliation.EmploymentMembership.Membership",
+      "full_type": "OrganizationAffiliation.EmploymentMembership.Membership",
+      "type": "OrganizationAffiliation",
+      "subtype": "EmploymentMembership",
+      "subsubtype": "Membership",
       "definition": "The relationship between a person and the organization or GPE of which the agent is an member, or with which the agent has a membership agreement",
       "template": "<arg1> is a member of <arg2>",
       "args": {
@@ -4710,7 +4989,10 @@
     },
     "OrganizationAffiliation.EmploymentMembership.Unspecified": {
       "id": "LDC_KAIROS_rel_027",
-      "type": "OrganizationAffiliation.EmploymentMembership.Unspecified",
+      "full_type": "OrganizationAffiliation.EmploymentMembership.Unspecified",
+      "type": "OrganizationAffiliation",
+      "subtype": "EmploymentMembership",
+      "subsubtype": "Unspecified",
       "definition": "The relationship between a person and the organization or GPE of which the agent is an employee or member, or with which the agent has a contractual business or service agreement, where the context does not distinguish whether the relationship is employment or membership",
       "template": "<arg1> is a member of/employed by <arg2>",
       "args": {
@@ -4733,7 +5015,10 @@
     },
     "OrganizationAffiliation.Founder.Founder": {
       "id": "LDC_KAIROS_rel_028",
-      "type": "OrganizationAffiliation.Founder.Founder",
+      "full_type": "OrganizationAffiliation.Founder.Founder",
+      "type": "OrganizationAffiliation",
+      "subtype": "Founder",
+      "subsubtype": "Founder",
       "definition": "This relation captures a person entity and the organization founded by that person",
       "template": "<arg1> is a founder of <arg2>",
       "args": {
@@ -4755,7 +5040,10 @@
     },
     "OrganizationAffiliation.Leadership.Government": {
       "id": "LDC_KAIROS_rel_029",
-      "type": "OrganizationAffiliation.Leadership.Government",
+      "full_type": "OrganizationAffiliation.Leadership.Government",
+      "type": "OrganizationAffiliation",
+      "subtype": "Leadership",
+      "subsubtype": "Government",
       "definition": "The relationship between a person and a governmental organization or GPE led by that person (who is not the head of state)",
       "template": "<arg1> is a leader of <arg2>",
       "args": {
@@ -4778,7 +5066,10 @@
     },
     "OrganizationAffiliation.Leadership.HeadOfState": {
       "id": "LDC_KAIROS_rel_030",
-      "type": "OrganizationAffiliation.Leadership.HeadOfState",
+      "full_type": "OrganizationAffiliation.Leadership.HeadOfState",
+      "type": "OrganizationAffiliation",
+      "subtype": "Leadership",
+      "subsubtype": "HeadOfState",
       "definition": "The relationship between a person and a country GPE led by that person",
       "template": "<arg1> is a leader of <arg2>",
       "args": {
@@ -4800,7 +5091,10 @@
     },
     "OrganizationAffiliation.Leadership.MilitaryPolice": {
       "id": "LDC_KAIROS_rel_031",
-      "type": "OrganizationAffiliation.Leadership.MilitaryPolice",
+      "full_type": "OrganizationAffiliation.Leadership.MilitaryPolice",
+      "type": "OrganizationAffiliation",
+      "subtype": "Leadership",
+      "subsubtype": "MilitaryPolice",
       "definition": "The relationship between a person and a military or police organization led by that person",
       "template": "<arg1> is a leader of <arg2>",
       "args": {
@@ -4822,7 +5116,10 @@
     },
     "OrganizationAffiliation.Leadership.Unspecified": {
       "id": "LDC_KAIROS_rel_032",
-      "type": "OrganizationAffiliation.Leadership.Unspecified",
+      "full_type": "OrganizationAffiliation.Leadership.Unspecified",
+      "type": "OrganizationAffiliation",
+      "subtype": "Leadership",
+      "subsubtype": "Unspecified",
       "definition": "The relationship between a person and an organization or GPE led by that person, where the context does not distinguish the nature of the organization",
       "template": "<arg1> is a leader of <arg2>",
       "args": {
@@ -4845,7 +5142,10 @@
     },
     "PartWhole.Subsidiary.NationalityCitizen": {
       "id": "LDC_KAIROS_rel_033",
-      "type": "PartWhole.Subsidiary.NationalityCitizen",
+      "full_type": "PartWhole.Subsidiary.NationalityCitizen",
+      "type": "PartWhole",
+      "subtype": "Subsidiary",
+      "subsubtype": "NationalityCitizen",
       "definition": "The ownership, administrative, and other hierarchical relationships between organizations and GPEs, and between governmental organizations and their parent GPE",
       "template": "<arg1> is a subsidiary of <arg2>",
       "args": {
@@ -4867,7 +5167,10 @@
     },
     "PartWhole.Subsidiary.OrganizationSubsidiary": {
       "id": "LDC_KAIROS_rel_034",
-      "type": "PartWhole.Subsidiary.OrganizationSubsidiary",
+      "full_type": "PartWhole.Subsidiary.OrganizationSubsidiary",
+      "type": "PartWhole",
+      "subtype": "Subsidiary",
+      "subsubtype": "OrganizationSubsidiary",
       "definition": "The ownership, administrative, and other hierarchical relationships between organizations, including relationships between a department within an organization and the organization itself, and between a company and its parent company",
       "template": "<arg1> is a subsidiary of <arg2>",
       "args": {
@@ -4889,7 +5192,10 @@
     },
     "PartWhole.Subsidiary.Unspecified": {
       "id": "LDC_KAIROS_rel_035",
-      "type": "PartWhole.Subsidiary.Unspecified",
+      "full_type": "PartWhole.Subsidiary.Unspecified",
+      "type": "PartWhole",
+      "subtype": "Subsidiary",
+      "subsubtype": "Unspecified",
       "definition": "The ownership, administrative, and other hierarchical relationships between organizations and GPEs, where the context does not make it clear whether the parent in the hierarchy is an organization or a GPE",
       "template": "<arg1> is a subsidiary of <arg2>",
       "args": {
@@ -4913,7 +5219,10 @@
     },
     "PersonalSocial.Relationship.Political": {
       "id": "LDC_KAIROS_rel_036",
-      "type": "PersonalSocial.Relationship.Political",
+      "full_type": "PersonalSocial.Relationship.Political",
+      "type": "PersonalSocial",
+      "subtype": "Relationship",
+      "subsubtype": "Political",
       "definition": "Otherwise unspecified political relationship between a person and another person",
       "template": "<arg1> has political relationship with <arg2>",
       "args": {
@@ -4928,7 +5237,10 @@
     },
     "PersonalSocial.Relationship.Unspecified": {
       "id": "LDC_KAIROS_rel_037",
-      "type": "PersonalSocial.Relationship.Unspecified",
+      "full_type": "PersonalSocial.Relationship.Unspecified",
+      "type": "PersonalSocial",
+      "subtype": "Relationship",
+      "subsubtype": "Unspecified",
       "definition": "Otherwise unspecified relationship between a person and another person",
       "template": "<arg1> has unspecified relationship with <arg2>",
       "args": {
@@ -4943,7 +5255,10 @@
     },
     "PersonalSocial.Role.ProfessionalRole": {
       "id": "LDC_KAIROS_rel_038",
-      "type": "PersonalSocial.Role.ProfessionalRole",
+      "full_type": "PersonalSocial.Role.ProfessionalRole",
+      "type": "PersonalSocial",
+      "subtype": "Role",
+      "subsubtype": "ProfessionalRole",
       "definition": "The relationship between a person and their position or occupation",
       "template": "<arg1> has a job role of <arg2>",
       "args": {
@@ -4965,7 +5280,10 @@
     },
     "PersonalSocial.Role.TitleFormOfAddress": {
       "id": "LDC_KAIROS_rel_039",
-      "type": "PersonalSocial.Role.TitleFormOfAddress",
+      "full_type": "PersonalSocial.Role.TitleFormOfAddress",
+      "type": "PersonalSocial",
+      "subtype": "Role",
+      "subsubtype": "TitleFormOfAddress",
       "definition": "The relationship between a person and their title or honorific",
       "template": "<arg1> has a title of <arg2>",
       "args": {
@@ -4987,7 +5305,10 @@
     },
     "PersonalSocial.Role.Unspecified": {
       "id": "LDC_KAIROS_rel_040",
-      "type": "PersonalSocial.Role.Unspecified",
+      "full_type": "PersonalSocial.Role.Unspecified",
+      "type": "PersonalSocial",
+      "subtype": "Role",
+      "subsubtype": "Unspecified",
       "definition": "The relationship between a person and their position, occupation, title, or honorific, where the context does not make it clear whether the role is a position or an honorific",
       "template": "<arg1> has a role of <arg2>",
       "args": {
@@ -5009,7 +5330,10 @@
     },
     "Physical.LocatedNear.Surround": {
       "id": "LDC_KAIROS_rel_041",
-      "type": "Physical.LocatedNear.Surround",
+      "full_type": "Physical.LocatedNear.Surround",
+      "type": "Physical",
+      "subtype": "LocatedNear",
+      "subsubtype": "Surround",
       "definition": "An entity or filler physically surrounding a place",
       "template": "<arg1> is surrounded by <arg2>",
       "args": {
@@ -5043,7 +5367,10 @@
     },
     "Physical.LocatedNear.Unspecified": {
       "id": "LDC_KAIROS_rel_042",
-      "type": "Physical.LocatedNear.Unspecified",
+      "full_type": "Physical.LocatedNear.Unspecified",
+      "type": "Physical",
+      "subtype": "LocatedNear",
+      "subsubtype": "Unspecified",
       "definition": "The physical location of an entity or filler",
       "template": "<arg1> is located in or near <arg2>",
       "args": {
@@ -5077,7 +5404,10 @@
     },
     "Physical.OrganizationHeadquarters.OrganizationHeadquarters": {
       "id": "LDC_KAIROS_rel_043",
-      "type": "Physical.OrganizationHeadquarters.OrganizationHeadquarters",
+      "full_type": "Physical.OrganizationHeadquarters.OrganizationHeadquarters",
+      "type": "Physical",
+      "subtype": "OrganizationHeadquarters",
+      "subsubtype": "OrganizationHeadquarters",
       "definition": "The relation between the headquarters of an organization and the GPE, LOC, or FAC entity in which the headquarters are located",
       "template": "<arg1> has headquarters in <arg2>",
       "args": {
@@ -5101,7 +5431,10 @@
     },
     "Physical.Resident.Resident": {
       "id": "LDC_KAIROS_rel_044",
-      "type": "Physical.Resident.Resident",
+      "full_type": "Physical.Resident.Resident",
+      "type": "Physical",
+      "subtype": "Resident",
+      "subsubtype": "Resident",
       "definition": "All GPE, LOC, and FAC entities in which a person entity has lived",
       "template": "<arg1> is a resident of <arg2>",
       "args": {
@@ -5125,7 +5458,10 @@
     },
     "ResponsibilityBlame.AssignBlame.AssignBlame": {
       "id": "LDC_KAIROS_rel_045",
-      "type": "ResponsibilityBlame.AssignBlame.AssignBlame",
+      "full_type": "ResponsibilityBlame.AssignBlame.AssignBlame",
+      "type": "ResponsibilityBlame",
+      "subtype": "AssignBlame",
+      "subsubtype": "AssignBlame",
       "definition": "An entity blamed for an event",
       "template": "<arg1> is blamed for <arg2>",
       "args": {
@@ -5150,7 +5486,10 @@
     },
     "ResponsibilityBlame.ClaimResponsibility.ClaimResponsibility": {
       "id": "LDC_KAIROS_rel_046",
-      "type": "ResponsibilityBlame.ClaimResponsibility.ClaimResponsibility",
+      "full_type": "ResponsibilityBlame.ClaimResponsibility.ClaimResponsibility",
+      "type": "ResponsibilityBlame",
+      "subtype": "ClaimResponsibility",
+      "subsubtype": "ClaimResponsibility",
       "definition": "An entity claiming responsibility for an event",
       "template": "<arg1> claims responsibility for <arg2>",
       "args": {

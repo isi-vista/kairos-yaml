@@ -59,7 +59,7 @@ def get_slot_role(slot: Slot, step_type: str) -> str:
     """
     event_type = ontology.events.get(step_type.split("/")[-1], None)
     if event_type is not None and slot.role not in event_type.args:
-        logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.type}'")
+        logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.full_type}'")
 
     return f"{step_type}/Slots/{slot.role}"
 

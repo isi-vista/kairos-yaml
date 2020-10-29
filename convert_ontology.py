@@ -49,7 +49,10 @@ def convert_sheet(sheet: pd.DataFrame, sheet_type: Sheets) -> Mapping[str, Any]:
             item_type = ".".join([row["Type"], row["Subtype"], row["Sub-subtype"]])
             items[item_type] = Predicate(
                 id=row["AnnotIndexID"],
-                type=item_type,
+                full_type=item_type,
+                type=row["Type"],
+                subtype=row["Subtype"],
+                subsubtype=row["Sub-subtype"],
                 definition=row["Definition"],
                 template=row["Template"],
                 args={
