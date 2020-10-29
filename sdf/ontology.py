@@ -102,7 +102,7 @@ class Ontology(InternalBase):
             Tree of event types, subtypes, and subsubtypes.
         """
         tree: Dict[str, Dict[str, List[str]]] = {}
-        event_triples = [tuple(e.split(".")) for e in self.events]
+        event_triples = [(e.type, e.subtype, e.subsubtype) for e in self.events.values()]
         for event_type, subtype, subsubtype in event_triples:
             if event_type not in tree:
                 tree[event_type] = {}
