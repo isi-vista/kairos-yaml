@@ -113,7 +113,7 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
         Slot constraints.
     """
     for entity in constraints:
-        if entity not in ontology.entities:
+        if entity not in ontology.entities and entity != "EVENT":
             logging.warning(f"Entity '{entity}' not in ontology")
 
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
