@@ -390,7 +390,7 @@ def validate_schemas(json_data: Mapping[str, Any]) -> None:
                                 "Content-Type": "application/ld+json"
                             },
                             timeout=10)
-    except requests.exceptions.Timeout:
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         logging.warning("Program validator is unavailable, so schema might not validate")
     else:
         response = req.json()
