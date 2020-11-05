@@ -146,7 +146,7 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id:
     constraints = get_slot_constraints(slot.constraints)
     cur_slot["entityTypes"] = constraints
     if slot.reference is not None:
-        cur_slot["reference"] = slot.reference
+        cur_slot["reference"] = f"wiki:{slot.reference}"
 
     # Get entity ID for relations
     if slot.refvar is not None:
