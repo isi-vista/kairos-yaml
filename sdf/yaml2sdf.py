@@ -243,17 +243,18 @@ def create_orders(
     return orders
 
 
-def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
+def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str, Any]:
     """Converts YAML to SDF.
 
     Args:
         yaml_data: Data from YAML file.
+        performer_prefix: Performer prefix for context.
 
     Returns:
         Schema in SDF format.
     """
     schema: MutableMapping[str, Any] = {
-        "@id": yaml_data.schema_id,
+        "@id": f"{performer_prefix}:{yaml_data.schema_id}",
         "comment": [],
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
@@ -353,20 +354,26 @@ def convert_yaml_to_sdf(yaml_data: Schema) -> Mapping[str, Any]:
     return schema
 
 
-def merge_schemas(schema_list: Sequence[Mapping[str, Any]], library_id: str) -> Mapping[str, Any]:
+def merge_schemas(schema_list: Sequence[Mapping[str, Any]], performer_prefix: str,
+                  performer_uri: str, library_id: str) -> Mapping[str, Any]:
     """Merge multiple schemas.
 
     Args:
         schema_list: List of SDF schemas.
+        performer_prefix: Performer prefix for context.
+        performer_uri: Performer URI for context.
         library_id: ID of schema collection.
 
     Returns:
         Data in JSON output format.
     """
     sdf = {
-        "@context": ["https://kairos-sdf.s3.amazonaws.com/context/kairos-v0.93.jsonld"],
+        "@context": [
+            "https://kairos-sdf.s3.amazonaws.com/context/kairos-v0.93.jsonld",
+            {performer_prefix: performer_uri}
+        ],
         "sdfVersion": "0.93",
-        "@id": library_id,
+        "@id": f"{performer_prefix}:{library_id}",
         "schemas": schema_list,
     }
 
@@ -401,11 +408,14 @@ def validate_schemas(json_data: Mapping[str, Any]) -> None:
                 print(f'\t{message}')
 
 
-def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], library_id: str) -> Mapping[str, Any]:
+def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], performer_prefix: str,
+                            performer_uri: str, library_id: str) -> Mapping[str, Any]:
     """Convert YAML schema library into SDF schema library.
 
     Args:
         yaml_schemas: YAML schemas.
+        performer_prefix: Performer prefix for context.
+        performer_uri: Performer URI for context.
         library_id: ID of schema collection.
 
     Returns:
@@ -418,22 +428,25 @@ def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], library_i
         raise RuntimeError(
             "The parsed and raw schemas do not match. The schema might have misordered fields, or there is a bug in this script.")
     for yaml_schema in parsed_yaml:
-        out_json = convert_yaml_to_sdf(yaml_schema)
+        out_json = convert_yaml_to_sdf(yaml_schema, performer_prefix)
         sdf_schemas.append(out_json)
 
-    json_data = merge_schemas(sdf_schemas, library_id)
+    json_data = merge_schemas(sdf_schemas, performer_prefix, performer_uri, library_id)
 
     validate_schemas(json_data)
 
     return json_data
 
 
-def convert_files(yaml_files: Sequence[Path], json_file: Path) -> None:
+def convert_files(yaml_files: Sequence[Path], json_file: Path, performer_prefix: str,
+                  performer_uri: str) -> None:
     """Converts YAML files into a single JSON file.
 
     Args:
         yaml_files: List of YAML file paths.
         json_file: JSON file path.
+        performer_prefix: Performer prefix for context.
+        performer_uri: Performer URI for context.
     """
     input_schemas = []
     for yaml_file in yaml_files:
@@ -441,7 +454,7 @@ def convert_files(yaml_files: Sequence[Path], json_file: Path) -> None:
             yaml_data = yaml.safe_load(file)
         input_schemas.extend(yaml_data)
 
-    output_library = convert_all_yaml_to_sdf(input_schemas, json_file.stem)
+    output_library = convert_all_yaml_to_sdf(input_schemas, performer_prefix, performer_uri, json_file.stem)
 
     with json_file.open("w") as file:
         json.dump(output_library, file, ensure_ascii=True, indent=4)
@@ -454,9 +467,14 @@ def main() -> None:
                    help="Paths to input YAML schemas.")
     p.add_argument("--output-file", type=Path, required=True,
                    help="Path to output JSON schema.")
+    p.add_argument("--performer-prefix", required=True,
+                   help="Performer prefix for context.")
+    p.add_argument("--performer-uri", required=True,
+                   help="Performer URI for context.")
+
     args = p.parse_args()
 
-    convert_files(args.input_files, args.output_file)
+    convert_files(args.input_files, args.output_file, args.performer_prefix, args.performer_uri)
 
 
 if __name__ == "__main__":
