@@ -254,7 +254,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         Schema in SDF format.
     """
     schema: MutableMapping[str, Any] = {
-        "@id": f"{performer_prefix}:{yaml_data.schema_id}",
+        "@id": f"{performer_prefix}:Schemas/{yaml_data.schema_id}",
         "comment": [],
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
@@ -373,7 +373,7 @@ def merge_schemas(schema_list: Sequence[Mapping[str, Any]], performer_prefix: st
             {performer_prefix: performer_uri}
         ],
         "sdfVersion": "0.93",
-        "@id": f"{performer_prefix}:{library_id}",
+        "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
         "schemas": schema_list,
     }
 
