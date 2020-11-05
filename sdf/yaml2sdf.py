@@ -259,7 +259,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         "super": "kairos:Event",
         "name": yaml_data.schema_name,
         "description": yaml_data.schema_dscpt,
-        "version": yaml_data.schema_version,
+        "version": f"{performer_prefix}_{yaml_data.schema_version}",
         "steps": [],
         "order": [],
         "entityRelations": []
