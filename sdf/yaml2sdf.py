@@ -1,12 +1,11 @@
 """Converts CMU YAML into KAIROS SDF JSON-LD."""
 
 import argparse
-from collections import Counter, defaultdict
+from collections import Counter
 import itertools
 import json
 import logging
 from pathlib import Path
-import random
 import typing
 from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
 
@@ -122,7 +121,7 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
 
 
 def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id: str, step_type: Optional[str], parent_type_id: str,
-                slot_shared: bool, entity_map: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+                slot_shared: bool) -> MutableMapping[str, Any]:
     """Gets slot.
 
     Args:
@@ -132,7 +131,6 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id:
         step_type: Step type.
         parent_type_id: ID of the parent object's type.
         slot_shared: Whether slot is shared.
-        entity_map: Mapping from mentions to entities.
 
     Returns:
         Slot.
@@ -157,13 +155,11 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id:
     if slot.reference is not None:
         cur_slot["reference"] = f"wiki:{slot.reference}"
 
-    # Get entity ID for relations
+    # Set refvar and warn if missing
     if slot.refvar is not None:
-        entity_map[cur_slot["@id"]] = slot.refvar
         cur_slot["refvar"] = slot.refvar
     else:
         logging.warning(f"{slot} misses refvar")
-        entity_map[cur_slot["@id"]] = str(random.random())
 
     if slot.comment is not None:
         cur_slot["comment"] = slot.comment
@@ -284,9 +280,6 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     # Get steps
     steps = []
 
-    # For sameAs relation
-    entity_map: MutableMapping[str, Any] = {}
-
     # For order
     step_map: MutableMapping[str, StepMapItem] = {}
 
@@ -310,7 +303,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
 
             slots.append(
-                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], cur_step["@type"], slot_shared, entity_map))
+                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], cur_step["@type"], slot_shared))
 
         cur_step["participants"] = slots
         steps.append(cur_step)
@@ -319,7 +312,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     for slot in yaml_data.slots:
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
-        parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared, entity_map)
+        parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared)
 
         slots.append(parsed_slot)
     schema["slots"] = slots
@@ -328,35 +321,11 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     for cur_step in steps:
         for cur_slot in cur_step["participants"]:
             if schema_slot_counter[cur_slot["name"]] == 1:
-                temp = entity_map[cur_slot["@id"]]
-                del entity_map[cur_slot["@id"]]
-
                 cur_slot["@id"] = cur_slot["@id"].strip("-a")
-
-                entity_map[cur_slot["@id"]] = temp
 
     schema["steps"] = steps
 
     schema["order"] = create_orders(yaml_data, schema["@id"], step_map)
-
-    # Get entity relations
-    entity_map = {x: y for x, y in entity_map.items() if y is not None}
-    # Get same as relation
-    reverse_entity_map = defaultdict(list)
-    for k, v in entity_map.items():
-        reverse_entity_map[v].append(k)
-    entity_relations: Sequence[Any] = []
-    # for v in reverse_entity_map.values():
-    #     cur_entity_relation = {
-    #         "relationSubject": v[0],
-    #         "relations": [{
-    #             "relationPredicate": "kairos:Relations/sameAs",
-    #             "relationObject": x
-    #         } for x in v[1:]]
-    #     }
-    #     if cur_entity_relation["relations"]:
-    #         entity_relations.append(cur_entity_relation)
-    schema["entityRelations"] = entity_relations
 
     return schema
 
