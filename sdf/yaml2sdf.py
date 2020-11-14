@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 import random
 import typing
-from typing import Any, List, Mapping, MutableMapping, Sequence, Tuple, Union
+from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
 
 from pydantic import parse_obj_as
 import requests
@@ -47,21 +47,23 @@ def get_step_type(step: Step) -> str:
     return f"kairos:Primitives/Events/{primitive}"
 
 
-def get_slot_role(slot: Slot, step_type: str) -> str:
+def get_slot_role(slot: Slot, step_type: Optional[str], step_id: str) -> str:
     """Gets slot role.
 
     Args:
         slot: Slot data.
         step_type: Type of step.
+        step_id: ID of step.
 
     Returns:
         Slot role.
     """
-    event_type = ontology.events.get(step_type.split("/")[-1], None)
-    if event_type is not None and slot.role not in event_type.args:
-        logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.full_type}'")
+    if step_type is not None:
+        event_type = ontology.events.get(step_type, None)
+        if event_type is not None and slot.role not in event_type.args:
+            logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.full_type}'")
 
-    return f"{step_type}/Slots/{slot.role}"
+    return f"{step_id}/Slots/{slot.role}"
 
 
 def get_slot_name(slot: Slot, slot_shared: bool) -> str:
@@ -119,15 +121,16 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
 
-def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id: str, step_type: str,
+def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id: str, step_type: Optional[str], parent_type_id: str,
                 slot_shared: bool, entity_map: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
     """Gets slot.
 
     Args:
         slot: Slot data.
         schema_slot_counter: Slot counter.
-        schema_id: Schema ID.
-        step_type: Type of step.
+        parent_id: Parent object ID.
+        step_type: Step type.
+        parent_type_id: ID of the parent object's type.
         slot_shared: Whether slot is shared.
         entity_map: Mapping from mentions to entities.
 
@@ -136,15 +139,19 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], schema_id:
     """
     cur_slot: MutableMapping[str, Any] = {
         "name": get_slot_name(slot, slot_shared),
-        "@id": get_slot_id(slot, schema_slot_counter, schema_id, slot_shared),
-        "role": get_slot_role(slot, step_type),
+        "@id": get_slot_id(slot, schema_slot_counter, parent_id, slot_shared),
+        "role": get_slot_role(slot, step_type, parent_type_id),
     }
 
+    # Generate loosest constraints if none are given
     if slot.constraints is None:
-        primitive = step_type.split("/")[-1]
-        slot.constraints = ontology.events[primitive].args[slot.role].constraints
+        if step_type is None:
+            slot.constraints = sorted(list(ontology.entities) + ["EVENT"])
+        else:
+            slot.constraints = ontology.events[step_type].args[slot.role].constraints
     constraints = get_slot_constraints(slot.constraints)
     cur_slot["entityTypes"] = constraints
+
     if slot.reference is not None:
         cur_slot["reference"] = f"wiki:{slot.reference}"
 
@@ -301,7 +308,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
 
             slots.append(
-                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], slot_shared, entity_map))
+                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], cur_step["@type"], slot_shared, entity_map))
 
         cur_step["participants"] = slots
         steps.append(cur_step)
@@ -310,7 +317,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     for slot in yaml_data.slots:
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
-        parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], schema["@id"], slot_shared, entity_map)
+        parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared, entity_map)
         parsed_slot["roleName"] = parsed_slot["role"]
         del parsed_slot["role"]
 
