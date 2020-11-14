@@ -137,10 +137,12 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id:
     Returns:
         Slot.
     """
+    role_key = "role" if step_type is not None else "roleName"
+
     cur_slot: MutableMapping[str, Any] = {
         "name": get_slot_name(slot, slot_shared),
         "@id": get_slot_id(slot, schema_slot_counter, parent_id, slot_shared),
-        "role": get_slot_role(slot, step_type, parent_type_id),
+        role_key: get_slot_role(slot, step_type, parent_type_id),
     }
 
     # Generate loosest constraints if none are given
@@ -318,8 +320,6 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
         parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared, entity_map)
-        parsed_slot["roleName"] = parsed_slot["role"]
-        del parsed_slot["role"]
 
         slots.append(parsed_slot)
     schema["slots"] = slots
