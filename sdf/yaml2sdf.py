@@ -11,22 +11,10 @@ from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple
 
 from pydantic import parse_obj_as
 import requests
-from typing_extensions import TypedDict
 import yaml
 
 from sdf.ontology import ontology
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
-
-
-class StepMapItem(TypedDict):
-    """Typing information for step_map.
-
-    Attributes:
-        id: Step ID.
-        step_idx: Index of step.
-    """
-    id: str
-    step_idx: int
 
 
 def get_step_type(step: Step) -> str:
@@ -181,14 +169,14 @@ def get_step_id(step: Step, schema_id: str) -> str:
 
 
 def create_orders(
-        yaml_data: Schema, schema_id: str, step_map: Mapping[str, StepMapItem]
+        yaml_data: Schema, schema_id: str, step_map: Mapping[str, str]
 ) -> Sequence[Mapping[str, Any]]:
     """Gets orders.
 
     Args:
         yaml_data: Data from YAML file.
         schema_id: Schema ID.
-        step_map: Mapping of steps containing some order information.
+        step_map: Mapping of steps from YAML IDs to SDF IDs.
 
     Returns:
         Orders in SDF format.
@@ -215,8 +203,8 @@ def create_orders(
     orders = []
     for order in yaml_data.order:
         if isinstance(order, Before):
-            before_id = step_map[order.before]['id']
-            after_id = step_map[order.after]['id']
+            before_id = step_map[order.before]
+            after_id = step_map[order.after]
             cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
                 "@id": f"{base_order_id}precede-{order.before}-{order.after}",
                 "comment": f"{order.before} precedes {order.after}",
@@ -224,8 +212,8 @@ def create_orders(
                 "after": after_id
             }
         elif isinstance(order, Container):
-            container_id = step_map[order.container]['id']
-            contained_id = step_map[order.contained]['id']
+            container_id = step_map[order.container]
+            contained_id = step_map[order.contained]
             cur_order = {
                 "@id": f"{base_order_id}contain-{order.container}-{order.contained}",
                 "comment": f"{order.container} contains {order.contained}",
@@ -233,7 +221,7 @@ def create_orders(
                 "contained": contained_id
             }
         elif isinstance(order, Overlaps):
-            overlaps_id = [step_map[overlap]['id'] for overlap in order.overlaps]
+            overlaps_id = [step_map[overlap] for overlap in order.overlaps]
             cur_order = {
                 "@id": f"{base_order_id}overlap-{'-'.join(order.overlaps)}",
                 "comment": f"{', '.join(order.overlaps)} overlaps",
@@ -281,7 +269,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     steps = []
 
     # For order
-    step_map: MutableMapping[str, StepMapItem] = {}
+    step_map: MutableMapping[str, str] = {}
 
     # For naming slot ID
     schema_slot_counter: typing.Counter[str] = Counter()
@@ -296,7 +284,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         if step.comment is not None:
             cur_step["comment"] = [cur_step["comment"], step.comment]
 
-        step_map[step.id] = {"id": cur_step["@id"], "step_idx": idx + 1}
+        step_map[step.id] = cur_step["@id"]
 
         slots = []
         for slot in step.slots:
