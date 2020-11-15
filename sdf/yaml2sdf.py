@@ -79,15 +79,16 @@ def get_slot_name(slot: Slot, slot_shared: bool) -> str:
     name = slot.role
     uppercase_indices = [index for index, char in enumerate(name) if char.isupper()]
     if len(uppercase_indices) > 1:
-        name = name[:uppercase_indices[1]]
+        name = name[: uppercase_indices[1]]
     name = name.lower()
     if slot_shared and slot.refvar is not None:
         name += "-" + slot.refvar
     return replace_whitespace(name)
 
 
-def get_slot_id(slot: Slot, schema_slot_counter: typing.Counter[str],
-                parent_id: str, slot_shared: bool) -> str:
+def get_slot_id(
+    slot: Slot, schema_slot_counter: typing.Counter[str], parent_id: str, slot_shared: bool
+) -> str:
     """Gets slot ID.
 
     Args:
@@ -121,8 +122,14 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
 
-def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id: str, step_type: Optional[str], parent_type_id: str,
-                slot_shared: bool) -> MutableMapping[str, Any]:
+def create_slot(
+    slot: Slot,
+    schema_slot_counter: typing.Counter[str],
+    parent_id: str,
+    step_type: Optional[str],
+    parent_type_id: str,
+    slot_shared: bool,
+) -> MutableMapping[str, Any]:
     """Gets slot.
 
     Args:
@@ -182,7 +189,7 @@ def get_step_id(step: Step, schema_id: str) -> str:
 
 
 def create_orders(
-        yaml_data: Schema, schema_id: str, step_map: Mapping[str, str]
+    yaml_data: Schema, schema_id: str, step_map: Mapping[str, str]
 ) -> Sequence[Mapping[str, Any]]:
     """Gets orders.
 
@@ -212,7 +219,7 @@ def create_orders(
             logging.error(f"The ID '{missing_id}' in `order` is not in `steps`")
         exit(1)
 
-    base_order_id = f'{schema_id}/Order/'
+    base_order_id = f"{schema_id}/Order/"
     orders = []
     for order in yaml_data.order:
         if isinstance(order, Before):
@@ -222,7 +229,7 @@ def create_orders(
                 "@id": f"{base_order_id}precede-{order.before}-{order.after}",
                 "comment": f"{order.before} precedes {order.after}",
                 "before": before_id,
-                "after": after_id
+                "after": after_id,
             }
         elif isinstance(order, Container):
             container_id = step_map[order.container]
@@ -231,7 +238,7 @@ def create_orders(
                 "@id": f"{base_order_id}contain-{order.container}-{order.contained}",
                 "comment": f"{order.container} contains {order.contained}",
                 "container": container_id,
-                "contained": contained_id
+                "contained": contained_id,
             }
         elif isinstance(order, Overlaps):
             overlaps_id = [step_map[overlap] for overlap in order.overlaps]
@@ -270,7 +277,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         "version": f"{performer_prefix}_{yaml_data.schema_version}",
         "steps": [],
         "order": [],
-        "entityRelations": []
+        "entityRelations": [],
     }
 
     # Get comments
@@ -306,7 +313,15 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
 
             slots.append(
-                create_slot(slot, schema_slot_counter, cur_step["@id"], cur_step["@type"], cur_step["@type"], slot_shared))
+                create_slot(
+                    slot,
+                    schema_slot_counter,
+                    cur_step["@id"],
+                    cur_step["@type"],
+                    cur_step["@type"],
+                    slot_shared,
+                )
+            )
 
         cur_step["participants"] = slots
         steps.append(cur_step)
@@ -315,9 +330,11 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     for slot in yaml_data.slots:
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
-        parsed_slot = create_slot(slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared)
-
+        parsed_slot = create_slot(
+            slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared
+        )
         slots.append(parsed_slot)
+
     schema["slots"] = slots
 
     # Cleaning "-a" suffix for slots with counter == 1.
@@ -333,8 +350,12 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     return schema
 
 
-def merge_schemas(schema_list: Sequence[Mapping[str, Any]], performer_prefix: str,
-                  performer_uri: str, library_id: str) -> Mapping[str, Any]:
+def merge_schemas(
+    schema_list: Sequence[Mapping[str, Any]],
+    performer_prefix: str,
+    performer_uri: str,
+    library_id: str,
+) -> Mapping[str, Any]:
     """Merge multiple schemas.
 
     Args:
@@ -349,7 +370,7 @@ def merge_schemas(schema_list: Sequence[Mapping[str, Any]], performer_prefix: st
     sdf = {
         "@context": [
             "https://kairos-sdf.s3.amazonaws.com/context/kairos-v0.93.jsonld",
-            {performer_prefix: performer_uri}
+            {performer_prefix: performer_uri},
         ],
         "sdfVersion": "0.93",
         "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
@@ -369,26 +390,29 @@ def validate_schemas(json_data: Mapping[str, Any]) -> None:
         json_data: Data in JSON output format.
     """
     try:
-        req = requests.post("http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
-                            json=json_data,
-                            headers={
-                                "Accept": "application/json",
-                                "Content-Type": "application/ld+json"
-                            },
-                            timeout=10)
+        req = requests.post(
+            "http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
+            json=json_data,
+            headers={"Accept": "application/json", "Content-Type": "application/ld+json"},
+            timeout=10,
+        )
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         logging.warning("Program validator is unavailable, so schema might not validate")
     else:
         response = req.json()
-        validator_messages = response['errorsList'] + response['warningsList']
+        validator_messages = response["errorsList"] + response["warningsList"]
         if validator_messages:
-            print('Messages from program validator:')
+            print("Messages from program validator:")
             for message in validator_messages:
-                print(f'\t{message}')
+                print(f"\t{message}")
 
 
-def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], performer_prefix: str,
-                            performer_uri: str, library_id: str) -> Mapping[str, Any]:
+def convert_all_yaml_to_sdf(
+    yaml_schemas: Sequence[Mapping[str, Any]],
+    performer_prefix: str,
+    performer_uri: str,
+    library_id: str,
+) -> Mapping[str, Any]:
     """Convert YAML schema library into SDF schema library.
 
     Args:
@@ -405,7 +429,9 @@ def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], performer
     parsed_yaml = parse_obj_as(List[Schema], yaml_schemas)
     if [p.dict(exclude_none=True) for p in parsed_yaml] != yaml_schemas:
         raise RuntimeError(
-            "The parsed and raw schemas do not match. The schema might have misordered fields, or there is a bug in this script.")
+            "The parsed and raw schemas do not match. The schema might have misordered fields, "
+            "or there is a bug in this script."
+        )
     for yaml_schema in parsed_yaml:
         out_json = convert_yaml_to_sdf(yaml_schema, performer_prefix)
         sdf_schemas.append(out_json)
@@ -417,8 +443,9 @@ def convert_all_yaml_to_sdf(yaml_schemas: Sequence[Mapping[str, Any]], performer
     return json_data
 
 
-def convert_files(yaml_files: Sequence[Path], json_file: Path, performer_prefix: str,
-                  performer_uri: str) -> None:
+def convert_files(
+    yaml_files: Sequence[Path], json_file: Path, performer_prefix: str, performer_uri: str
+) -> None:
     """Converts YAML files into a single JSON file.
 
     Args:
@@ -433,7 +460,9 @@ def convert_files(yaml_files: Sequence[Path], json_file: Path, performer_prefix:
             yaml_data = yaml.safe_load(file)
         input_schemas.extend(yaml_data)
 
-    output_library = convert_all_yaml_to_sdf(input_schemas, performer_prefix, performer_uri, json_file.stem)
+    output_library = convert_all_yaml_to_sdf(
+        input_schemas, performer_prefix, performer_uri, json_file.stem
+    )
 
     with json_file.open("w") as file:
         json.dump(output_library, file, ensure_ascii=True, indent=4)
@@ -442,14 +471,12 @@ def convert_files(yaml_files: Sequence[Path], json_file: Path, performer_prefix:
 def main() -> None:
     """Converts YAML schema into JSON SDF."""
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--input-files", nargs="+", type=Path, required=True,
-                   help="Paths to input YAML schemas.")
-    p.add_argument("--output-file", type=Path, required=True,
-                   help="Path to output JSON schema.")
-    p.add_argument("--performer-prefix", required=True,
-                   help="Performer prefix for context.")
-    p.add_argument("--performer-uri", required=True,
-                   help="Performer URI for context.")
+    p.add_argument(
+        "--input-files", nargs="+", type=Path, required=True, help="Paths to input YAML schemas."
+    )
+    p.add_argument("--output-file", type=Path, required=True, help="Path to output JSON schema.")
+    p.add_argument("--performer-prefix", required=True, help="Performer prefix for context.")
+    p.add_argument("--performer-uri", required=True, help="Performer URI for context.")
 
     args = p.parse_args()
 
