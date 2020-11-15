@@ -242,7 +242,9 @@ def create_orders(
             }
         else:
             raise NotImplementedError
-        # isinstance() check will always be True but is needed for mypy
+        # isinstance() checks will always be True but are needed for mypy
+        if isinstance(cur_order["@id"], str):
+            cur_order["@id"] = replace_whitespace(cur_order["@id"])
         if order.comment is not None and isinstance(cur_order["comment"], str):
             cur_order["comment"] = [cur_order["comment"], order.comment]
         orders.append(cur_order)
