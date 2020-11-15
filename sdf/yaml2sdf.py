@@ -6,6 +6,7 @@ import itertools
 import json
 import logging
 from pathlib import Path
+import re
 import typing
 from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
 
@@ -15,6 +16,18 @@ import yaml
 
 from sdf.ontology import ontology
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
+
+
+def replace_whitespace(name: str) -> str:
+    """Replaces whitespace with hyphens.
+
+    Args:
+        name: String to process.
+
+    Returns:
+        String with whitespace replaced.
+    """
+    return re.sub(r"\s+", "-", name)
 
 
 def get_step_type(step: Step) -> str:
@@ -70,7 +83,7 @@ def get_slot_name(slot: Slot, slot_shared: bool) -> str:
     name = name.lower()
     if slot_shared and slot.refvar is not None:
         name += "-" + slot.refvar
-    return name
+    return replace_whitespace(name)
 
 
 def get_slot_id(slot: Slot, schema_slot_counter: typing.Counter[str],
@@ -145,7 +158,7 @@ def create_slot(slot: Slot, schema_slot_counter: typing.Counter[str], parent_id:
 
     # Set refvar and warn if missing
     if slot.refvar is not None:
-        cur_slot["refvar"] = slot.refvar
+        cur_slot["refvar"] = replace_whitespace(slot.refvar)
     else:
         logging.warning(f"{slot} misses refvar")
 
@@ -165,7 +178,7 @@ def get_step_id(step: Step, schema_id: str) -> str:
     Returns:
         Step ID.
     """
-    return f"{schema_id}/Steps/{step.id}"
+    return f"{schema_id}/Steps/{replace_whitespace(step.id)}"
 
 
 def create_orders(
