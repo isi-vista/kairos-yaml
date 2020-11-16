@@ -25,6 +25,7 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                 "schema_id": sch["@id"],
                 "schema_name": sch["name"],
                 "schema_dscpt": sch["description"],
+                "schema_version": sch["version"],
                 "super": sch["super"],
             }
             if "comment" in sch:
