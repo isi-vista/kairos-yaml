@@ -39,7 +39,10 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                         "roleName": slt["roleName"].split("/")[-1]
                     }
 
-                    opt_fields = ["name", "super", "entityTypes", "reference", "provenance", "aka", "refvar"]
+                    if "entityTypes" in slt:
+                        sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
+
+                    opt_fields = ["name", "super", "reference", "provenance", "aka", "refvar"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -71,7 +74,10 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                         if slt["values"] and len(slt["values"]) > 0:
                             sl_obj["values"] = slt["values"]
 
-                    opt_fields = ["entityTypes", "reference", "provenance", "aka", "refvar"]
+                    if "entityTypes" in slt:
+                        sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
+
+                    opt_fields = ["reference", "provenance", "aka", "refvar"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -134,7 +140,10 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                     "roleName": slt["roleName"]
                 }
 
-                opt_fields = ["entityTypes", "reference", "provenance", "aka"]
+                if "entityTypes" in slt:
+                    sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
+
+                opt_fields = ["reference", "provenance", "aka"]
                 for field in opt_fields:
                     if field in slt:
                         sl_obj[field] = slt[field]
