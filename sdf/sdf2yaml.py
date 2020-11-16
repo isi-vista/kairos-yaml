@@ -12,6 +12,14 @@ import yaml
 
 
 def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Converts SDF format to YAML format.
+
+    Args:
+        data: Input SDF schema.
+
+    Returns:
+        Output YAML schema, with some extra fields.
+    """
     yaml_obj = {}
 
     if "ta2" in data:
@@ -161,6 +169,12 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
 
 def convert_files(json_file: Path, yaml_file: Path) -> None:
+    """Converts SDF file to YAML file.
+
+    Args:
+        json_file: JSON file path.
+        yaml_file: YAML file path.
+    """
     with json_file.open() as file:
         json_data = json.load(file)
 
