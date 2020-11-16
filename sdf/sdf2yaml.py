@@ -22,11 +22,10 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
         for sch in data["schemas"]:
             sc_obj = {
-                "id": sch["@id"],
+                "schema_id": sch["@id"],
+                "schema_name": sch["name"],
+                "schema_dscpt": sch["description"],
                 "super": sch["super"],
-                "name": sch["name"],
-                "description": sch["description"],
-                "steps": []
             }
             if "comment" in sch:
                 sc_obj["comment"] = sch["comment"]
@@ -36,19 +35,23 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                 for slt in sch["slots"]:
                     sl_obj = {
                         "id": slt["@id"],
-                        "roleName": slt["roleName"].split("/")[-1]
+                        "role": slt["roleName"].split("/")[-1]
                     }
+
+                    if "refvar" in slt:
+                        sl_obj["refvar"] = slt["refvar"].replace("-", " ")
 
                     if "entityTypes" in slt:
                         sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
 
-                    opt_fields = ["name", "super", "reference", "provenance", "aka", "refvar"]
+                    opt_fields = ["name", "super", "reference", "provenance", "aka"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
 
                     sc_obj["slots"].append(sl_obj)
 
+            sc_obj["steps"] = []
             for stp in sch["steps"]:
                 st_obj = {
                     "id": stp["@id"],
@@ -74,10 +77,13 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                         if slt["values"] and len(slt["values"]) > 0:
                             sl_obj["values"] = slt["values"]
 
+                    if "refvar" in slt:
+                        sl_obj["refvar"] = slt["refvar"].replace("-", " ")
+
                     if "entityTypes" in slt:
                         sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
 
-                    opt_fields = ["reference", "provenance", "aka", "refvar"]
+                    opt_fields = ["reference", "provenance", "aka"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -105,7 +111,7 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                     sc_obj["order"].append(od_obj)
 
             # Prune or shorten ids for easier read
-            sc_obj["id"] = sc_obj["id"].split("/")[-1]
+            sc_obj["schema_id"] = sc_obj["schema_id"].split("/")[-1]
             if "slots" in sc_obj:
                 for slt in sc_obj["slots"]:
                     del slt["id"]
