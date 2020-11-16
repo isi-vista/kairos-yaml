@@ -11,20 +11,6 @@ from typing import Any, Mapping
 import yaml
 
 
-def search_and_tag(sc_obj, target_slot, val):
-    if "slots" in sc_obj:
-        for slt in sc_obj["slots"]:
-            if slt["id"] == target_slot:
-                slt["refVar"] = val
-                return
-
-    for stp in sc_obj["steps"]:
-        for slt in stp["slots"]:
-            if slt["id"] == target_slot:
-                slt["refVar"] = val
-                return
-
-
 def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
     yaml_obj = {}
 
@@ -53,7 +39,7 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                         "roleName": slt["roleName"].split("/")[-1]
                     }
 
-                    opt_fields = ["name", "super", "entityTypes", "reference", "provenance", "aka"]
+                    opt_fields = ["name", "super", "entityTypes", "reference", "provenance", "aka", "refvar"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -85,7 +71,7 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                         if slt["values"] and len(slt["values"]) > 0:
                             sl_obj["values"] = slt["values"]
 
-                    opt_fields = ["entityTypes", "reference", "provenance", "aka"]
+                    opt_fields = ["entityTypes", "reference", "provenance", "aka", "refvar"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -111,28 +97,6 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                                 od_obj[field] = ord[field]
 
                     sc_obj["order"].append(od_obj)
-
-            # Accounting for sameAs relations only
-            refVar_counter = 0
-            for rels in sch["entityRelations"]:
-                has_corefs = False
-                for r in rels["relations"]:
-                    if r["relationPredicate"] == "kairos:Relations/sameAs":
-                        has_corefs = True
-                    if r["relationPredicate"] == "kairos:primitives/Relations/SameAs":
-                        has_corefs = True
-
-                if not has_corefs:
-                    continue
-
-                search_and_tag(sc_obj, rels["relationSubject"], str(refVar_counter))
-                for r in rels["relations"]:
-                    confVal = f" (conf.: {r['confidence']})" if "confidence" in r else ""
-                    if r["relationPredicate"] == "kairos:Relations/sameAs" or r[
-                        "relationPredicate"] == "kairos:primitives/Relations/SameAs":
-                        search_and_tag(sc_obj, r["relationObject"], str(refVar_counter) + confVal)
-
-                refVar_counter += 1
 
             # Prune or shorten ids for easier read
             sc_obj["id"] = sc_obj["id"].split("/")[-1]
