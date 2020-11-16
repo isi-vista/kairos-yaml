@@ -21,7 +21,7 @@ def search_and_tag(sc_obj, target_slot, val):
 def parse_arguments():
     # Argument parsing
     parser = argparse.ArgumentParser(
-        description="Convert SDF (0.7) to YAML and print to stdout, for easier read. Might omit"
+        description="Convert SDF (0.93) to YAML and print to stdout, for easier read. Might omit"
                     "some fields in original json..."
     )
     parser.add_argument("sdf_path",
@@ -86,7 +86,7 @@ if __name__ == "__main__":
                     if field in stp:
                         st_obj[field] = stp[field]
 
-                for slt in stp["slots"]:
+                for slt in stp["participants"]:
                     sl_obj = {
                         "id": slt["@id"],
                         "name": slt["name"],
