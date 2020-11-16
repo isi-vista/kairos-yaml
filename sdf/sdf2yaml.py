@@ -34,9 +34,7 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
             if "slots" in sch:
                 sc_obj["slots"] = []
                 for slt in sch["slots"]:
-                    sl_obj = {
-                        "role": slt["roleName"].split("/")[-1]
-                    }
+                    sl_obj = {"role": slt["roleName"].split("/")[-1]}
 
                     if "refvar" in slt:
                         sl_obj["refvar"] = slt["refvar"].replace("-", " ")
@@ -58,24 +56,27 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
             sc_obj["steps"] = []
             for stp in sch["steps"]:
-                st_obj = {
-                    "id": stp["@id"],
-                    "primitive": stp["@type"].split("/")[-1],
-                    "slots": []
-                }
+                st_obj = {"id": stp["@id"], "primitive": stp["@type"].split("/")[-1], "slots": []}
 
                 opt_fields = [
-                    "name", "description", "reference", "provenance", "comment", "aka",
-                    "startTime", "endTime", "absoluteTime", "minDuration", "maxDuration"
+                    "name",
+                    "description",
+                    "reference",
+                    "provenance",
+                    "comment",
+                    "aka",
+                    "startTime",
+                    "endTime",
+                    "absoluteTime",
+                    "minDuration",
+                    "maxDuration",
                 ]
                 for field in opt_fields:
                     if field in stp:
                         st_obj[field] = stp[field]
 
                 for slt in stp["participants"]:
-                    sl_obj = {
-                        "role": slt["role"].split("/")[-1]
-                    }
+                    sl_obj = {"role": slt["role"].split("/")[-1]}
                     if "values" in slt:
                         if slt["values"] and len(slt["values"]) > 0:
                             sl_obj["values"] = slt["values"]
@@ -134,20 +135,15 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                 "super": prm["super"],
                 "name": prm["name"],
                 "description": prm["description"],
-                "slots": []
+                "slots": [],
             }
-            opt_fields = [
-                "comment", "aka", "minDuration", "maxDuration"
-            ]
+            opt_fields = ["comment", "aka", "minDuration", "maxDuration"]
             for field in opt_fields:
                 if field in prm:
                     pm_obj[field] = prm[field]
 
             for slt in prm["slots"]:
-                sl_obj = {
-                    "id": slt["@id"].split("/")[-1],
-                    "roleName": slt["roleName"]
-                }
+                sl_obj = {"id": slt["@id"].split("/")[-1], "roleName": slt["roleName"]}
 
                 if "entityTypes" in slt:
                     sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
@@ -177,9 +173,7 @@ def convert_files(json_file: Path, yaml_file: Path) -> None:
 def main() -> None:
     """Converts JSON SDF into YAML schema."""
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument(
-        "--input-file", type=Path, required=True, help="Path to input SDF file."
-    )
+    p.add_argument("--input-file", type=Path, required=True, help="Path to input SDF file.")
     p.add_argument("--output-file", type=Path, required=True, help="Path to output SDF schema.")
     args = p.parse_args()
 
