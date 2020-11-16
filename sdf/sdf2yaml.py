@@ -44,7 +44,12 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                     if "entityTypes" in slt:
                         sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
 
-                    opt_fields = ["name", "super", "reference", "provenance", "aka"]
+                    if "reference" in slt:
+                        sl_obj["reference"] = slt["reference"]
+                        if sl_obj["reference"].startswith("wiki:"):
+                            sl_obj["reference"] = sl_obj["reference"].replace("wiki:", "", 1)
+
+                    opt_fields = ["comment", "name", "super", "provenance", "aka"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
@@ -69,7 +74,6 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
                 for slt in stp["participants"]:
                     sl_obj = {
-                        "name": slt["name"],
                         "role": slt["role"].split("/")[-1]
                     }
                     if "values" in slt:
@@ -82,7 +86,12 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                     if "entityTypes" in slt:
                         sl_obj["constraints"] = [c.split("/")[-1] for c in slt["entityTypes"]]
 
-                    opt_fields = ["reference", "provenance", "aka"]
+                    if "reference" in slt:
+                        sl_obj["reference"] = slt["reference"]
+                        if sl_obj["reference"].startswith("wiki:"):
+                            sl_obj["reference"] = sl_obj["reference"].replace("wiki:", "", 1)
+
+                    opt_fields = ["comment", "name", "provenance", "aka"]
                     for field in opt_fields:
                         if field in slt:
                             sl_obj[field] = slt[field]
