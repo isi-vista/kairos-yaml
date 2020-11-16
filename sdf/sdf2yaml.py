@@ -103,19 +103,19 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
             if "order" in sch:
                 sc_obj["order"] = []
-                for ord in sch["order"]:
+                for order in sch["order"]:
                     od_obj = {}
 
                     opt_fields = ["before", "after", "overlaps", "container", "contained", "flags"]
                     for field in opt_fields:
-                        if field in ord:
+                        if field in order:
                             if field != "flags":
-                                if isinstance(ord[field], list):
-                                    od_obj[field] = [id.split("/")[-1] for id in ord[field]]
+                                if isinstance(order[field], list):
+                                    od_obj[field] = [id.split("/")[-1] for id in order[field]]
                                 else:
-                                    od_obj[field] = ord[field].split("/")[-1]
+                                    od_obj[field] = order[field].split("/")[-1]
                             else:
-                                od_obj[field] = ord[field]
+                                od_obj[field] = order[field]
 
                     sc_obj["order"].append(od_obj)
 
