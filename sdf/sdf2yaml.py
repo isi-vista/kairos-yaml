@@ -34,7 +34,6 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
                 sc_obj["slots"] = []
                 for slt in sch["slots"]:
                     sl_obj = {
-                        "id": slt["@id"],
                         "role": slt["roleName"].split("/")[-1]
                     }
 
@@ -69,7 +68,6 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
                 for slt in stp["participants"]:
                     sl_obj = {
-                        "id": slt["@id"],
                         "name": slt["name"],
                         "role": slt["role"].split("/")[-1]
                     }
@@ -112,13 +110,8 @@ def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
 
             # Prune or shorten ids for easier read
             sc_obj["schema_id"] = sc_obj["schema_id"].split("/")[-1]
-            if "slots" in sc_obj:
-                for slt in sc_obj["slots"]:
-                    del slt["id"]
             for stp in sc_obj["steps"]:
                 stp["id"] = stp["id"].split("/")[-1]
-                for slt in stp["slots"]:
-                    del slt["id"]
 
             yaml_obj["schemas"].append(sc_obj)
 
