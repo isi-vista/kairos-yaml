@@ -1,5 +1,12 @@
+"""Convert SDF (0.93) to YAML for easier reading.
+
+Omits some fields from the original JSON.
+"""
+
 import argparse
 import json
+from pathlib import Path
+from typing import Any, Mapping
 
 import yaml
 
@@ -18,25 +25,7 @@ def search_and_tag(sc_obj, target_slot, val):
                 return
 
 
-def parse_arguments():
-    # Argument parsing
-    parser = argparse.ArgumentParser(
-        description="Convert SDF (0.93) to YAML and print to stdout, for easier read. Might omit"
-                    "some fields in original json..."
-    )
-    parser.add_argument("sdf_path",
-                        type=str,
-                        help="path to SDF json file")
-
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = parse_arguments()
-
-    with open(args.sdf_path) as sdf_f:
-        data = json.load(sdf_f)
-
+def convert_sdf_to_yaml(data: Mapping[str, Any]) -> Mapping[str, Any]:
     yaml_obj = {}
 
     if "ta2" in data:
@@ -190,4 +179,30 @@ if __name__ == "__main__":
 
             yaml_obj["primitives"].append(pm_obj)
 
-    print(yaml.dump(yaml_obj, default_flow_style=False, sort_keys=False))
+    return yaml_obj
+
+
+def convert_files(json_file: Path, yaml_file: Path) -> None:
+    with json_file.open() as file:
+        json_data = json.load(file)
+
+    yaml_data = convert_sdf_to_yaml(json_data)
+
+    with yaml_file.open("w") as file:
+        yaml.dump(yaml_data, file, default_flow_style=False, sort_keys=False)
+
+
+def main() -> None:
+    """Converts JSON SDF into YAML schema."""
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument(
+        "--input-file", type=Path, required=True, help="Path to input SDF file."
+    )
+    p.add_argument("--output-file", type=Path, required=True, help="Path to output SDF schema.")
+    args = p.parse_args()
+
+    convert_files(args.input_file, args.output_file)
+
+
+if __name__ == "__main__":
+    main()
