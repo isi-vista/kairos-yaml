@@ -24,10 +24,10 @@ To set up the program environment, run `make install`. Creating a virtualenv bef
 
 ## Usage
 
-To convert schemas from YAML to JSON, run a command like the following:
+To convert schemas from YAML to JSON, run a command like the following (ISI context added as example only):
 
 ```bash
-python -m sdf.yaml2sdf --input-files example.yaml --output-file example.json
+python -m sdf.yaml2sdf --input-files schemas/*.yaml --output-file expanded_lib.json --performer-prefix isi --performer-uri "https://isi.edu/kairos/"
 ```
 
 If a new version of the ontology is released, run the following beforehand, substituting in the path to the newest ontology file:
