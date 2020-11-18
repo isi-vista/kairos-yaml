@@ -383,7 +383,7 @@ def merge_schemas(
 def validate_schemas(json_data: Mapping[str, Any]) -> None:
     """Validates generated schema against the program validator.
 
-    The program validator is not always avoilable, so the request will time out if no response is
+    The program validator is not always available, so the request will time out if no response is
     received within 10 seconds.
 
     Args:
