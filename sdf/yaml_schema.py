@@ -38,12 +38,14 @@ class Step(InternalBase):
     Attributes:
         id: Event ID.
         primitive: Event type.
+        required: Whether step is required.
         comment: Additional comments.
         slots: Event arguments.
     """
 
     id: str
     primitive: str
+    required: Optional[bool]
     comment: Optional[str]
     slots: Sequence[Slot]
 
