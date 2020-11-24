@@ -152,11 +152,14 @@ def create_slot(
     }
 
     # Generate loosest constraints if none are given
-    if slot.constraints is None:
+    if not slot.constraints:
         if step_type is None:
             slot.constraints = sorted(list(ontology.entities) + ["EVENT"])
         else:
-            slot.constraints = ontology.events[step_type].args[slot.role].constraints
+            primitive = ontology.get_default_event(step_type)
+            if primitive is None:
+                raise ValueError(f"Invalid primitive {primitive}")
+            slot.constraints = ontology.events[primitive].args[slot.role].constraints
     constraints = get_slot_constraints(slot.constraints)
     cur_slot["entityTypes"] = constraints
 
@@ -317,7 +320,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
                     slot,
                     schema_slot_counter,
                     cur_step["@id"],
-                    cur_step["@type"],
+                    step.primitive,
                     cur_step["@type"],
                     slot_shared,
                 )
