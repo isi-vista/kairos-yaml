@@ -17,6 +17,9 @@ import yaml
 from sdf.ontology import ontology
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
+REMOTE_ENDPOINT = "http://validation.kairos.nextcentury.com/json-ld/ksf/validate"
+LOCAL_ENDPOINT = "http://localhost:8008/json-ld/ksf/validate"
+
 
 def replace_whitespace(name: str) -> str:
     """Replaces whitespace with hyphens.
@@ -383,7 +386,7 @@ def merge_schemas(
     return sdf
 
 
-def validate_schemas(json_data: Mapping[str, Any]) -> None:
+def validate_schemas(json_data: Mapping[str, Any], use_remote: bool = True) -> None:
     """Validates generated schema against the program validator.
 
     The program validator is not always available, so the request will time out if no response is
@@ -391,10 +394,11 @@ def validate_schemas(json_data: Mapping[str, Any]) -> None:
 
     Args:
         json_data: Data in JSON output format.
+        use_remote: Use the program validator. Set to False to use a local version of the validator.
     """
     try:
         req = requests.post(
-            "http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
+            REMOTE_ENDPOINT if use_remote else LOCAL_ENDPOINT,
             json=json_data,
             headers={"Accept": "application/json", "Content-Type": "application/ld+json"},
             timeout=10,
