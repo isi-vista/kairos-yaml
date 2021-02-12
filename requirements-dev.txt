@@ -6,4 +6,3 @@ openpyxl==3.0.6
 pandas==1.1.5
 pydocstyle==5.1.1
 pylint==2.6.0
-yamllint==1.26.0

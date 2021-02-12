@@ -4,8 +4,7 @@ default:
 SHELL=/usr/bin/env bash
 
 PYTHON_FILES=convert_ontology.py sdf/*.py setup.py
-YAML_FILES=.prettierrc.yaml
-PRETTIER_FILES=$(YAML_FILES) *.md
+PRETTIER_FILES=.prettierrc.json *.md
 
 PRETTIER=prettier --ignore-path .gitignore
 
@@ -27,9 +26,6 @@ mypy:
 flake8:
 	flake8 $(PYTHON_FILES)
 
-yamllint:
-	yamllint --strict $(YAML_FILES)
-
 SORT=sort --key=1,1 --key=3V --field-separator="="
 
 reqs-fix:
@@ -48,7 +44,7 @@ black-check:
 	isort --check $(PYTHON_FILES)
 	black --check $(PYTHON_FILES)
 
-check: reqs-check black-check flake8 mypy lint docstyle prettier-check yamllint
+check: reqs-check black-check flake8 mypy lint docstyle prettier-check
 
 precommit: reqs-fix black-fix prettier-fix check
 
