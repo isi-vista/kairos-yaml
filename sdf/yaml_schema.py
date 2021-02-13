@@ -1,12 +1,18 @@
 """Specification of YAML schema format."""
 
-from typing import Optional, Sequence, Union
+from typing import Any, MutableMapping, Optional, Sequence, Union
 
 from pydantic import BaseModel, Extra
 
 
 class InternalBase(BaseModel):
-    """Base class for schema objects."""
+    """Base class for schema objects.
+
+    Attributes:
+        private_data: Additional data that does not fit in any existing field.
+    """
+
+    private_data: Optional[MutableMapping[str, Any]]
 
     class Config:
         """Model configuration."""
