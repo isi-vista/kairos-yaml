@@ -15,7 +15,8 @@ profile = "black"
 extension-pkg-whitelist = "pydantic"
 # Allows shorter names than the default regex,
 # which is in pylint.checkers.base.SnakeCaseStyle.DEFAULT_NAME_RGX
-variable-rgx = "(([a-z][a-z0-9_]*)|(_[a-z0-9_]*))$"
+argument-rgx = "(([a-z][a-z0-9_]*)|(_[a-z0-9_]*)|([A-Z]))$"
+variable-rgx = "(([a-z][a-z0-9_]*)|(_[a-z0-9_]*)|([A-Z]))$"
 
 [tool.pylint.format]
 # Let Black handle line length
@@ -26,12 +27,10 @@ max-line-length = 300
 # pylint FAQ recommends disabling:
 # wrong-import-order when using isort
 # missing-module-docstring,missing-class-docstring,missing-function-docstring when using pydocstyle
-# logging-fstring-interpolation prevents inefficiencies that we don't care about
 disable = """
 R,fixme,no-member,unsupported-membership-test,unsubscriptable-object
 unsupported-assignment-operation,not-an-iterable,too-many-lines,wrong-import-order,
-missing-module-docstring,missing-class-docstring,missing-function-docstring,
-logging-fstring-interpolation
+missing-module-docstring,missing-class-docstring,missing-function-docstring
 """
 
 [tool.pylint.reports]

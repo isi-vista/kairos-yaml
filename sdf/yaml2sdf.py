@@ -45,7 +45,7 @@ def get_step_type(step: Step) -> str:
     primitive = ontology.get_default_event(step.primitive)
 
     if primitive not in ontology.events:
-        logging.warning(f"Primitive '{step.primitive}' in step '{step.id}' not in ontology")
+        logging.warning("Primitive '%s' in step '%s' not in ontology", step.primitive, step.id)
 
     return f"kairos:Primitives/Events/{primitive}"
 
@@ -64,7 +64,9 @@ def get_slot_role(slot: Slot, step_type: Optional[str], step_id: str) -> str:
     if step_type is not None:
         event_type = ontology.events.get(step_type, None)
         if event_type is not None and slot.role not in event_type.args:
-            logging.warning(f"Role '{slot.role}' is not valid for event '{event_type.full_type}'")
+            logging.warning(
+                "Role '%s' is not valid for event '%s'", slot.role, event_type.full_type
+            )
 
     return f"{step_id}/Slots/{slot.role}"
 
@@ -120,7 +122,7 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
     """
     for entity in constraints:
         if entity not in ontology.entities and entity != "EVENT":
-            logging.warning(f"Entity '{entity}' not in ontology")
+            logging.warning("Entity '%s' not in ontology", entity)
 
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
@@ -173,7 +175,7 @@ def create_slot(
     if slot.refvar is not None:
         cur_slot["refvar"] = replace_whitespace(slot.refvar)
     else:
-        logging.warning(f"{slot} misses refvar")
+        logging.warning("%s misses refvar", str(slot))
 
     if slot.comment is not None:
         cur_slot["comment"] = slot.comment
@@ -222,7 +224,7 @@ def create_orders(
     missing_order_ids = order_ids - step_ids
     if missing_order_ids:
         for missing_id in missing_order_ids:
-            logging.error(f"The ID '{missing_id}' in `order` is not in `steps`")
+            logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
         exit(1)
 
     base_order_id = f"{schema_id}/Order/"

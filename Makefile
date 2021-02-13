@@ -26,7 +26,7 @@ mypy:
 flake8:
 	flake8 $(PYTHON_FILES)
 
-SORT=sort --key=1,1 --key=3V --field-separator="="
+SORT=LC_ALL=C sort --key=1,1 --key=3V --field-separator="="
 
 reqs-fix:
 	$(SORT) --output=requirements.txt requirements.txt
