@@ -44,6 +44,7 @@ class Step(InternalBase):
     Attributes:
         id: Event ID.
         primitive: Event type.
+        reference: External fine-grained entity type.
         required: Whether step is required.
         comment: Additional comments.
         slots: Event arguments.
@@ -51,6 +52,7 @@ class Step(InternalBase):
 
     id: str
     primitive: str
+    reference: Optional[str]
     required: Optional[bool]
     comment: Optional[str]
     slots: Sequence[Slot]
