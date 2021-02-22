@@ -1,4 +1,4 @@
 PyYAML==5.4.1
-lazy-object-proxy==1.4.3
+lazy-object-proxy==1.5.2
 pydantic==1.7.3
 requests==2.25.1
