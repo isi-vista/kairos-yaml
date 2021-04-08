@@ -2,6 +2,7 @@
 
 import argparse
 from collections import Counter
+from copy import deepcopy
 import itertools
 import json
 import logging
@@ -276,6 +277,8 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     Returns:
         Schema in SDF format.
     """
+    yaml_data = deepcopy(yaml_data)
+
     schema: MutableMapping[str, Any] = {
         "@id": f"{performer_prefix}:Schemas/{yaml_data.schema_id}",
         "comment": [],
@@ -287,6 +290,9 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         "order": [],
         "entityRelations": [],
     }
+
+    # Remove any steps without a primitive
+    yaml_data.steps = [step for step in yaml_data.steps if step.primitive != "NotInOntology"]
 
     # Get comments
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
