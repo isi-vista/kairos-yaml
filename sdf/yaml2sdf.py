@@ -225,7 +225,7 @@ def create_orders(
     order_ids = set(itertools.chain.from_iterable(order_tuples))
     missing_order_ids = order_ids - step_ids - ignored_steps
     if missing_order_ids:
-        for missing_id in missing_order_ids:
+        for missing_id in sorted(missing_order_ids):
             logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
         exit(1)
 
