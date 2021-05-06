@@ -9,7 +9,7 @@ import logging
 from pathlib import Path
 import re
 import typing
-from typing import Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
+from typing import AbstractSet, Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
 
 from pydantic import parse_obj_as
 import requests
@@ -198,7 +198,7 @@ def get_step_id(step: Step, schema_id: str) -> str:
 
 
 def create_orders(
-    yaml_data: Schema, schema_id: str, step_map: Mapping[str, str]
+    yaml_data: Schema, schema_id: str, step_map: Mapping[str, str], ignored_steps: AbstractSet[str]
 ) -> Sequence[Mapping[str, Any]]:
     """Gets orders.
 
@@ -206,6 +206,7 @@ def create_orders(
         yaml_data: Data from YAML file.
         schema_id: Schema ID.
         step_map: Mapping of steps from YAML IDs to SDF IDs.
+        ignored_steps: Step IDs to ignore relations for.
 
     Returns:
         Orders in SDF format.
@@ -222,7 +223,7 @@ def create_orders(
         else:
             raise NotImplementedError
     order_ids = set(itertools.chain.from_iterable(order_tuples))
-    missing_order_ids = order_ids - step_ids
+    missing_order_ids = order_ids - step_ids - ignored_steps
     if missing_order_ids:
         for missing_id in missing_order_ids:
             logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
@@ -232,6 +233,8 @@ def create_orders(
     orders = []
     for order in yaml_data.order:
         if isinstance(order, Before):
+            if order.before in ignored_steps or order.after in ignored_steps:
+                continue
             before_id = step_map[order.before]
             after_id = step_map[order.after]
             cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
@@ -241,6 +244,8 @@ def create_orders(
                 "after": after_id,
             }
         elif isinstance(order, Container):
+            if order.container in ignored_steps or order.contained in ignored_steps:
+                continue
             container_id = step_map[order.container]
             contained_id = step_map[order.contained]
             cur_order = {
@@ -250,6 +255,8 @@ def create_orders(
                 "contained": contained_id,
             }
         elif isinstance(order, Overlaps):
+            if any(overlap in ignored_steps for overlap in order.overlaps):
+                continue
             overlaps_id = [step_map[overlap] for overlap in order.overlaps]
             cur_order = {
                 "@id": f"{base_order_id}overlap-{'-'.join(order.overlaps)}",
@@ -292,6 +299,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     }
 
     # Remove any steps without a primitive
+    ignored_steps = set(step.id for step in yaml_data.steps if step.primitive == "NotInOntology")
     yaml_data.steps = [step for step in yaml_data.steps if step.primitive != "NotInOntology"]
 
     # Get comments
@@ -359,7 +367,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
 
     schema["steps"] = steps
 
-    schema["order"] = create_orders(yaml_data, schema["@id"], step_map)
+    schema["order"] = create_orders(yaml_data, schema["@id"], step_map, ignored_steps)
 
     return schema
 
