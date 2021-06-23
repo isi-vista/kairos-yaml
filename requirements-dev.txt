@@ -1,10 +1,10 @@
 black==21.6b0
 flake8==3.9.2
-isort==5.8.0
-mypy==0.902
+isort==5.9.1
+mypy==0.910
 openpyxl==3.0.7
-pandas==1.2.4
+pandas==1.2.5
 pydocstyle==6.1.1
 pylint==2.8.3
 types-PyYAML==5.4.3
-types-requests==0.1.12
+types-requests==2.25.0
