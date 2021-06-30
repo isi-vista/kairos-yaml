@@ -5,4 +5,4 @@ format to KAIROS SDF.
 """
 
 __version__ = "0.0.1"
-__description__ = __doc__.split("\n")[0]  # Use first line of docstring
+__description__ = __doc__.split("\n", maxsplit=1)[0]  # Use first line of docstring
