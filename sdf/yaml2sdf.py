@@ -166,7 +166,7 @@ def create_slot(
             if primitive is None:
                 raise ValueError(f"Invalid primitive {primitive}")
             slot.constraints = ontology.events[primitive].args[slot.role].constraints
-    constraints = get_slot_constraints(slot.constraints)
+    constraints = get_slot_constraints([con for con in slot.constraints if con != "NotInOntology"])
     cur_slot["entityTypes"] = constraints
 
     if slot.reference is not None:
