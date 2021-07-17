@@ -18,8 +18,10 @@ import yaml
 from sdf.ontology import ontology
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
-REMOTE_ENDPOINT = "http://validation.kairos.nextcentury.com/json-ld/ksf/validate"
-LOCAL_ENDPOINT = "http://localhost:8008/json-ld/ksf/validate"
+VALIDATOR_ENDPOINTS = {
+    "remote": "http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
+    "local": "http://localhost:8008/json-ld/ksf/validate",
+}
 
 
 def replace_whitespace(name: str) -> str:
@@ -402,7 +404,7 @@ def merge_schemas(
     return sdf
 
 
-def validate_schemas(json_data: Mapping[str, Any], use_remote: bool = True) -> None:
+def validate_schemas(json_data: Mapping[str, Any], validator_endpoint: str) -> None:
     """Validates generated schema against the program validator.
 
     The program validator is not always available, so the request will time out if no response is
@@ -410,11 +412,11 @@ def validate_schemas(json_data: Mapping[str, Any], use_remote: bool = True) -> N
 
     Args:
         json_data: Data in JSON output format.
-        use_remote: Use the program validator. Set to False to use a local version of the validator.
+        validator_endpoint: URL for accessing validator.
     """
     try:
         req = requests.post(
-            REMOTE_ENDPOINT if use_remote else LOCAL_ENDPOINT,
+            validator_endpoint,
             json=json_data,
             headers={"Accept": "application/json", "Content-Type": "application/ld+json"},
             timeout=10,
@@ -435,6 +437,7 @@ def convert_all_yaml_to_sdf(
     performer_prefix: str,
     performer_uri: str,
     library_id: str,
+    validator: Optional[str],
 ) -> Mapping[str, Any]:
     """Convert YAML schema library into SDF schema library.
 
@@ -443,6 +446,7 @@ def convert_all_yaml_to_sdf(
         performer_prefix: Performer prefix for context.
         performer_uri: Performer URI for context.
         library_id: ID of schema collection.
+        validator: Validator to use.
 
     Returns:
         Data in JSON output format.
@@ -461,13 +465,20 @@ def convert_all_yaml_to_sdf(
 
     json_data = merge_schemas(sdf_schemas, performer_prefix, performer_uri, library_id)
 
-    validate_schemas(json_data)
+    if validator:
+        validate_schemas(json_data, VALIDATOR_ENDPOINTS[validator])
+    else:
+        logging.info("Skipping validation")
 
     return json_data
 
 
 def convert_files(
-    yaml_files: Sequence[Path], json_file: Path, performer_prefix: str, performer_uri: str
+    yaml_files: Sequence[Path],
+    json_file: Path,
+    performer_prefix: str,
+    performer_uri: str,
+    validator: Optional[str],
 ) -> None:
     """Converts YAML files into a single JSON file.
 
@@ -476,6 +487,7 @@ def convert_files(
         json_file: JSON file path.
         performer_prefix: Performer prefix for context.
         performer_uri: Performer URI for context.
+        validator: Validator to use.
     """
     input_schemas = []
     for yaml_file in yaml_files:
@@ -484,7 +496,7 @@ def convert_files(
         input_schemas.extend(yaml_data)
 
     output_library = convert_all_yaml_to_sdf(
-        input_schemas, performer_prefix, performer_uri, json_file.stem
+        input_schemas, performer_prefix, performer_uri, json_file.stem, validator
     )
 
     with json_file.open("w") as file:
@@ -500,10 +512,17 @@ def main() -> None:
     p.add_argument("--output-file", type=Path, required=True, help="Path to output JSON schema.")
     p.add_argument("--performer-prefix", required=True, help="Performer prefix for context.")
     p.add_argument("--performer-uri", required=True, help="Performer URI for context.")
+    p.add_argument("--validator", choices=list(VALIDATOR_ENDPOINTS), help="Validator to use.")
 
     args = p.parse_args()
 
-    convert_files(args.input_files, args.output_file, args.performer_prefix, args.performer_uri)
+    convert_files(
+        args.input_files,
+        args.output_file,
+        args.performer_prefix,
+        args.performer_uri,
+        args.validator,
+    )
 
 
 if __name__ == "__main__":
