@@ -393,10 +393,10 @@ def merge_schemas(
     """
     sdf = {
         "@context": [
-            "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.0.jsonld",
+            "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.1.jsonld",
             {performer_prefix: performer_uri},
         ],
-        "sdfVersion": "1.0",
+        "sdfVersion": "1.1",
         "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
         "schemas": schema_list,
     }
