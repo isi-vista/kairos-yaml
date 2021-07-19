@@ -16,7 +16,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
-from sdf.sdf_schema import Entity
+from sdf.sdf_schema import Entity, Participant
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -336,7 +336,8 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         step_map[step.id] = cur_step["@id"]
 
         slots = []
-        for slot in step.slots:
+        participants = []
+        for i, slot in enumerate(step.slots):
             slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
 
             slots.append(
@@ -349,13 +350,26 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
                     slot_shared,
                 )
             )
+            primitive = ontology.get_default_event(step.primitive)
+            if primitive:
+                role = f"A{ontology.events[primitive].args[slot.role].position[-1]}"
+            else:
+                role = "A?"
+            participants.append(
+                Participant(
+                    **{"@id": cur_step["@id"] + f"/Participant/{i}"},
+                    entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
+                    roleName=role,
+                )
+            )
 
-        cur_step["participants"] = slots
+        cur_step["participants"] = [p.dict(by_alias=True, exclude_none=True) for p in participants]
         all_slots.extend(slots)
         steps.append(cur_step)
 
     slots = []
-    for slot in yaml_data.slots:
+    participants = []
+    for i, slot in enumerate(yaml_data.slots):
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
         parsed_slot = create_slot(
@@ -363,7 +377,16 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         )
         slots.append(parsed_slot)
 
+        participants.append(
+            Participant(
+                **{"@id": schema["@id"] + f"/Participant/{i}"},
+                entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
+                roleName="A?",
+            )
+        )
+
     schema["slots"] = slots
+    schema["participants"] = [p.dict(by_alias=True, exclude_none=True) for p in participants]
     all_slots.extend(slots)
 
     refvars = defaultdict(list)
@@ -381,10 +404,10 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     schema["entities"] = [e.dict(by_alias=True, exclude_none=True) for e in entities]
 
     # Cleaning "-a" suffix for slots with counter == 1.
-    for cur_step in steps:
-        for cur_slot in cur_step["participants"]:
-            if schema_slot_counter[cur_slot["name"]] == 1:
-                cur_slot["@id"] = cur_slot["@id"].strip("-a")
+    # for cur_step in steps:
+    #     for cur_slot in cur_step["participants"]:
+    #         if schema_slot_counter[cur_slot["name"]] == 1:
+    #             cur_slot["@id"] = cur_slot["@id"].strip("-a")
 
     schema["steps"] = steps
 
