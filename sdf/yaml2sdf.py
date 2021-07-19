@@ -9,7 +9,18 @@ import logging
 from pathlib import Path
 import re
 import typing
-from typing import AbstractSet, Any, List, Mapping, MutableMapping, Optional, Sequence, Tuple, Union
+from typing import (
+    AbstractSet,
+    Any,
+    List,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 from pydantic import parse_obj_as
 import requests
@@ -277,7 +288,9 @@ def create_orders(
     return orders
 
 
-def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str, Any]:
+def convert_yaml_to_sdf(
+    yaml_data: Schema, performer_prefix: str
+) -> Tuple[Sequence[Mapping[str, Any]], Sequence[Mapping[str, Any]]]:
     """Converts YAML to SDF.
 
     Args:
@@ -449,11 +462,12 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
 
     schema["events"] = [e.dict(by_alias=True, exclude_none=True) for e in events]
 
-    return schema
+    return schema["events"], schema["entities"]
 
 
 def merge_schemas(
-    schema_list: Sequence[Mapping[str, Any]],
+    events: Sequence[Mapping[str, Any]],
+    entities: Sequence[Mapping[str, Any]],
     performer_prefix: str,
     performer_uri: str,
     library_id: str,
@@ -476,7 +490,12 @@ def merge_schemas(
         ],
         "sdfVersion": "1.1",
         "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
-        "schemas": schema_list,
+        "comment": (
+            "This file was generated using a very rudimentary implementation of SDF v1.1, "
+            "so it does not look good and likely contains errors."
+        ),
+        "events": events,
+        "entities": entities,
     }
 
     return sdf
@@ -529,7 +548,8 @@ def convert_all_yaml_to_sdf(
     Returns:
         Data in JSON output format.
     """
-    sdf_schemas = []
+    events: MutableSequence[Mapping[str, Any]] = []
+    entities: MutableSequence[Mapping[str, Any]] = []
 
     parsed_yaml = parse_obj_as(List[Schema], yaml_schemas)
     if [p.dict(exclude_none=True) for p in parsed_yaml] != yaml_schemas:
@@ -538,10 +558,11 @@ def convert_all_yaml_to_sdf(
             "or there is a bug in this script."
         )
     for yaml_schema in parsed_yaml:
-        out_json = convert_yaml_to_sdf(yaml_schema, performer_prefix)
-        sdf_schemas.append(out_json)
+        event_json, entity_json = convert_yaml_to_sdf(yaml_schema, performer_prefix)
+        events.extend(event_json)
+        entities.extend(entity_json)
 
-    json_data = merge_schemas(sdf_schemas, performer_prefix, performer_uri, library_id)
+    json_data = merge_schemas(events, entities, performer_prefix, performer_uri, library_id)
 
     if validator:
         validate_schemas(json_data, VALIDATOR_ENDPOINTS[validator])
