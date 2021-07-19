@@ -16,7 +16,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
-from sdf.sdf_schema import Entity, Participant
+from sdf.sdf_schema import Entity, Event, Participant
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -314,6 +314,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
 
     # Get steps
     steps = []
+    events = []
 
     # For order
     step_map: MutableMapping[str, str] = {}
@@ -330,6 +331,16 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             "@type": get_step_type(step),
             "comment": comments[idx + 1],
         }
+        event = Event(
+            **{"@id": cur_step["@id"]},
+            description="N/a",  # TODO: Remove if confirmed not required
+            name=step.id,
+            participants=None,
+            qlabel=None,  # TODO: Fill with KGTK query
+            qnode=step.reference,
+            TA1explanation=None,  # TODO: Fill once extractable from YAML
+        )
+        events.append(event)
         if step.comment is not None:
             cur_step["comment"] = [cur_step["comment"], step.comment]
 
@@ -364,6 +375,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             )
 
         cur_step["participants"] = [p.dict(by_alias=True, exclude_none=True) for p in participants]
+        event.participants = participants
         all_slots.extend(slots)
         steps.append(cur_step)
 
@@ -412,6 +424,8 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     schema["steps"] = steps
 
     schema["order"] = create_orders(yaml_data, schema["@id"], step_map, ignored_steps)
+
+    schema["events"] = [e.dict(by_alias=True, exclude_none=True) for e in events]
 
     return schema
 
