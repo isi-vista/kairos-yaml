@@ -315,8 +315,8 @@ def convert_yaml_to_sdf(
     }
 
     # Remove any steps without a primitive
-    ignored_steps = set(step.id for step in yaml_data.steps if step.primitive == "NotInOntology")
-    yaml_data.steps = [step for step in yaml_data.steps if step.primitive != "NotInOntology"]
+    # ignored_steps = set(step.id for step in yaml_data.steps if step.primitive == "NotInOntology")
+    # yaml_data.steps = [step for step in yaml_data.steps if step.primitive != "NotInOntology"]
 
     # Get comments
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
@@ -440,7 +440,7 @@ def convert_yaml_to_sdf(
 
     schema["steps"] = steps
 
-    schema["order"] = create_orders(yaml_data, schema["@id"], step_map, ignored_steps)
+    schema["order"] = create_orders(yaml_data, schema["@id"], step_map, set())
 
     child_dict = {c.child: c for c in children}
     for order in schema["order"]:
