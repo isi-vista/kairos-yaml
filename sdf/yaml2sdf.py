@@ -423,11 +423,14 @@ def convert_yaml_to_sdf(
     for slot_dict in all_slots:
         refvars[slot_dict["refvar"]].append(slot_dict)
     for refvar, slot_list in refvars.items():
+        # TODO: Check for consistency across usages, and make qnode required
+        references = [s["reference"] for s in slot_list if "reference" in s]
+        qnode = references[0] if references else "Q355120"  # Qnode for entity
         entity = Entity(
             **{"@id": schema["@id"] + f"/{refvar}"},  # TODO: Figure out how to use aliases properly
             name=refvar,
             qlabel=None,  # TODO: Fill with KGTK query
-            qnode=slot_list[0]["reference"],  # TODO: Check for consistency across usages
+            qnode=qnode,
         )
         entities.append(entity)
     schema["entities"] = [e.dict(by_alias=True, exclude_none=True) for e in entities]
