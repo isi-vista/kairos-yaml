@@ -1,7 +1,7 @@
 """Converts CMU YAML into KAIROS SDF JSON-LD."""
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 from copy import deepcopy
 import itertools
 import json
@@ -16,6 +16,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
+from sdf.sdf_schema import Entity
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -317,6 +318,8 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     # For order
     step_map: MutableMapping[str, str] = {}
 
+    all_slots = []
+
     # For naming slot ID
     schema_slot_counter: typing.Counter[str] = Counter()
 
@@ -348,6 +351,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             )
 
         cur_step["participants"] = slots
+        all_slots.extend(slots)
         steps.append(cur_step)
 
     slots = []
@@ -360,6 +364,21 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
         slots.append(parsed_slot)
 
     schema["slots"] = slots
+    all_slots.extend(slots)
+
+    refvars = defaultdict(list)
+    entities = []
+    for slot_dict in all_slots:
+        refvars[slot_dict["refvar"]].append(slot_dict)
+    for refvar, slot_list in refvars.items():
+        entity = Entity(
+            **{"@id": schema["@id"] + f"/{refvar}"},  # TODO: Figure out how to use aliases properly
+            name=refvar,
+            qlabel=None,  # TODO: Fill with KGTK query
+            qnode=slot_list[0]["reference"],  # TODO: Check for consistency across usages
+        )
+        entities.append(entity)
+    schema["entities"] = [e.dict(by_alias=True, exclude_none=True) for e in entities]
 
     # Cleaning "-a" suffix for slots with counter == 1.
     for cur_step in steps:
