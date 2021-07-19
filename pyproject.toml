@@ -16,6 +16,7 @@ extension-pkg-whitelist = "pydantic"
 # Allows shorter names than the default regex,
 # which is in pylint.checkers.base.SnakeCaseStyle.DEFAULT_NAME_RGX
 argument-rgx = "(([a-z][a-z0-9_]*)|(_[a-z0-9_]*)|([A-Z]))$"
+class-rgx = "[A-Z][a-zA-Z0-9]*$"
 variable-rgx = "(([a-z][a-z0-9_]*)|(_[a-z0-9_]*)|([A-Z]))$"
 
 [tool.pylint.format]
