@@ -16,7 +16,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
-from sdf.sdf_schema import Entity, Event, Participant
+from sdf.sdf_schema import Child, Entity, Event, Participant
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -315,6 +315,7 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     # Get steps
     steps = []
     events = []
+    children = []
 
     # For order
     step_map: MutableMapping[str, str] = {}
@@ -341,6 +342,9 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
             TA1explanation=None,  # TODO: Fill once extractable from YAML
         )
         events.append(event)
+        # TODO: Fix type error on next line
+        child = Child(child=cur_step["@id"], optional=True if step.required is False else None, outlinks=[])  # type: ignore[call-arg]
+        children.append(child)
         if step.comment is not None:
             cur_step["comment"] = [cur_step["comment"], step.comment]
 
@@ -424,6 +428,24 @@ def convert_yaml_to_sdf(yaml_data: Schema, performer_prefix: str) -> Mapping[str
     schema["steps"] = steps
 
     schema["order"] = create_orders(yaml_data, schema["@id"], step_map, ignored_steps)
+
+    child_dict = {c.child: c for c in children}
+    for order in schema["order"]:
+        if "before" in order:
+            child = child_dict[order["before"]]
+            child.outlinks = list(child.outlinks if child.outlinks else []) + [order["after"]]
+
+    event = Event(
+        **{"@id": schema["@id"]},
+        children=children,
+        description="N/a",  # TODO: Remove if confirmed not required
+        name=schema["@id"],
+        participants=None,
+        qlabel=None,  # TODO: Fill with KGTK query
+        qnode=None,
+        TA1explanation=None,  # TODO: Fill once extractable from YAML
+    )
+    events.append(event)
 
     schema["events"] = [e.dict(by_alias=True, exclude_none=True) for e in events]
 
