@@ -27,7 +27,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
-from sdf.sdf_schema import Child, Entity, Event, Library, Participant
+from sdf.sdf_schema import Child, Entity, Event, Library, Participant, SingleOrSeq
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -316,7 +316,6 @@ def convert_yaml_to_sdf(
         schema_comment.append(yaml_data.comment)
 
     # Get steps
-    steps = []
     events = []
     children = []
 
@@ -329,14 +328,10 @@ def convert_yaml_to_sdf(
     schema_slot_counter: typing.Counter[str] = Counter()
 
     for idx, step in enumerate(yaml_data.steps):
-        cur_step: MutableMapping[str, Any] = {
-            "@id": get_step_id(step, schema_id),
-            "name": step.id,
-            "@type": get_step_type(step),
-            "comment": comments[idx + 1],
-        }
+        cur_step_id = get_step_id(step, schema_id)
+        cur_step_comment: SingleOrSeq[str] = comments[idx + 1]
         event = Event(
-            **{"@id": cur_step["@id"]},
+            **{"@id": cur_step_id},  # type: ignore[arg-type]
             description="N/a",  # TODO: Remove if confirmed not required
             name=step.id,
             participants=None,
@@ -346,13 +341,13 @@ def convert_yaml_to_sdf(
         )
         events.append(event)
         child = Child(
-            child=cur_step["@id"], optional=True if step.required is False else None, outlinks=[]
+            child=cur_step_id, optional=True if step.required is False else None, outlinks=[]
         )
         children.append(child)
         if step.comment is not None:
-            cur_step["comment"] = [cur_step["comment"], step.comment]
+            cur_step_comment = [cur_step_comment, step.comment]  # type: ignore[list-item]
 
-        step_map[step.id] = cur_step["@id"]
+        step_map[step.id] = cur_step_id
 
         slots = []
         participants = []
@@ -363,9 +358,9 @@ def convert_yaml_to_sdf(
                 create_slot(
                     slot,
                     schema_slot_counter,
-                    cur_step["@id"],
+                    cur_step_id,
                     step.primitive,
-                    cur_step["@type"],
+                    "",
                     slot_shared,
                 )
             )
@@ -376,16 +371,14 @@ def convert_yaml_to_sdf(
                 role = "A?"
             participants.append(
                 Participant(
-                    **{"@id": cur_step["@id"] + f"/Participant/{i}"},
+                    **{"@id": cur_step_id + f"/Participant/{i}"},
                     entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
                     roleName=role,
                 )
             )
 
-        cur_step["participants"] = [p.dict(by_alias=True, exclude_none=True) for p in participants]
         event.participants = participants
         all_slots.extend(slots)
-        steps.append(cur_step)
 
     slots = []
     participants = []
