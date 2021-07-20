@@ -27,7 +27,7 @@ import requests
 import yaml
 
 from sdf.ontology import ontology
-from sdf.sdf_schema import Child, Entity, Event, Participant
+from sdf.sdf_schema import Child, Entity, Event, Library, Participant
 from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
@@ -290,7 +290,7 @@ def create_orders(
 
 def convert_yaml_to_sdf(
     yaml_data: Schema, performer_prefix: str
-) -> Tuple[Sequence[Mapping[str, Any]], Sequence[Mapping[str, Any]]]:
+) -> Tuple[Sequence[Event], Sequence[Entity]]:
     """Converts YAML to SDF.
 
     Args:
@@ -465,12 +465,13 @@ def convert_yaml_to_sdf(
 
     schema["events"] = [e.dict(by_alias=True, exclude_none=True) for e in events]
 
-    return schema["events"], schema["entities"]
+    return events, entities
 
 
 def merge_schemas(
-    events: Sequence[Mapping[str, Any]],
-    entities: Sequence[Mapping[str, Any]],
+    events: Sequence[Event],
+    entities: Sequence[Entity],
+    latest_version: str,
     performer_prefix: str,
     performer_uri: str,
     library_id: str,
@@ -486,22 +487,25 @@ def merge_schemas(
     Returns:
         Data in JSON output format.
     """
-    sdf = {
-        "@context": [
-            "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.1.jsonld",
-            {performer_prefix: performer_uri},
-        ],
-        "sdfVersion": "1.1",
-        "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
-        "comment": (
+    sdf = Library(
+        **{  # type: ignore[arg-type]
+            "@context": [
+                "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.1.jsonld",
+                {performer_prefix: performer_uri},
+            ],
+            "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
+        },
+        comment=(
             "This file was generated using a very rudimentary implementation of SDF v1.1, "
             "so it does not look good and likely contains errors."
         ),
-        "events": events,
-        "entities": entities,
-    }
+        entities=entities,
+        events=events,
+        sdfVersion="1.1",
+        version=f"{performer_prefix}_{latest_version}",
+    )
 
-    return sdf
+    return sdf.dict(by_alias=True, exclude_none=True)
 
 
 def validate_schemas(json_data: Mapping[str, Any], validator_endpoint: str) -> None:
@@ -551,8 +555,8 @@ def convert_all_yaml_to_sdf(
     Returns:
         Data in JSON output format.
     """
-    events: MutableSequence[Mapping[str, Any]] = []
-    entities: MutableSequence[Mapping[str, Any]] = []
+    all_events: MutableSequence[Event] = []
+    all_entities: MutableSequence[Entity] = []
 
     parsed_yaml = parse_obj_as(List[Schema], yaml_schemas)
     if [p.dict(exclude_none=True) for p in parsed_yaml] != yaml_schemas:
@@ -561,11 +565,14 @@ def convert_all_yaml_to_sdf(
             "or there is a bug in this script."
         )
     for yaml_schema in parsed_yaml:
-        event_json, entity_json = convert_yaml_to_sdf(yaml_schema, performer_prefix)
-        events.extend(event_json)
-        entities.extend(entity_json)
+        events, entities = convert_yaml_to_sdf(yaml_schema, performer_prefix)
+        all_events.extend(events)
+        all_entities.extend(entities)
 
-    json_data = merge_schemas(events, entities, performer_prefix, performer_uri, library_id)
+    latest_version = max(schema.schema_version for schema in parsed_yaml)
+    json_data = merge_schemas(
+        all_events, all_entities, latest_version, performer_prefix, performer_uri, library_id
+    )
 
     if validator:
         validate_schemas(json_data, VALIDATOR_ENDPOINTS[validator])
