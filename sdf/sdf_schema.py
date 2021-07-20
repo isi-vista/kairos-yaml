@@ -18,7 +18,7 @@ class InternalBase(BaseModel):
     """Base class for schema objects."""
 
     comment: Optional[SingleOrSeq[str]]
-    privateData: Any
+    privateData: Optional[Any]
 
     class Config:
         """Model configuration."""

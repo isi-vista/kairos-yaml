@@ -355,8 +355,9 @@ def convert_yaml_to_sdf(
             TA1explanation=None,  # TODO: Fill once extractable from YAML
         )
         events.append(event)
-        # TODO: Fix type error on next line
-        child = Child(child=cur_step["@id"], optional=True if step.required is False else None, outlinks=[])  # type: ignore[call-arg]
+        child = Child(
+            child=cur_step["@id"], optional=True if step.required is False else None, outlinks=[]
+        )
         children.append(child)
         if step.comment is not None:
             cur_step["comment"] = [cur_step["comment"], step.comment]
