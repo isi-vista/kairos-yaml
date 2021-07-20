@@ -302,17 +302,7 @@ def convert_yaml_to_sdf(
     """
     yaml_data = deepcopy(yaml_data)
 
-    schema: MutableMapping[str, Any] = {
-        "@id": f"{performer_prefix}:Schemas/{yaml_data.schema_id}",
-        "comment": [],
-        "super": "kairos:Event",
-        "name": yaml_data.schema_name,
-        "description": yaml_data.schema_dscpt,
-        "version": f"{performer_prefix}_{yaml_data.schema_version}",
-        "steps": [],
-        "order": [],
-        "entityRelations": [],
-    }
+    schema_id = f"{performer_prefix}:Schemas/{yaml_data.schema_id}"
 
     # Remove any steps without a primitive
     # ignored_steps = set(step.id for step in yaml_data.steps if step.primitive == "NotInOntology")
@@ -321,9 +311,9 @@ def convert_yaml_to_sdf(
     # Get comments
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
     comments = ["Steps:"] + [f"{idx}. {text}" for idx, text in enumerate(comments, start=1)]
-    schema["comment"] = comments
+    schema_comment = comments
     if yaml_data.comment is not None:
-        schema["comment"].append(yaml_data.comment)
+        schema_comment.append(yaml_data.comment)
 
     # Get steps
     steps = []
@@ -340,7 +330,7 @@ def convert_yaml_to_sdf(
 
     for idx, step in enumerate(yaml_data.steps):
         cur_step: MutableMapping[str, Any] = {
-            "@id": get_step_id(step, schema["@id"]),
+            "@id": get_step_id(step, schema_id),
             "name": step.id,
             "@type": get_step_type(step),
             "comment": comments[idx + 1],
@@ -403,20 +393,18 @@ def convert_yaml_to_sdf(
         slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
 
         parsed_slot = create_slot(
-            slot, schema_slot_counter, schema["@id"], None, schema["@id"], slot_shared
+            slot, schema_slot_counter, schema_id, None, schema_id, slot_shared
         )
         slots.append(parsed_slot)
 
         participants.append(
             Participant(
-                **{"@id": schema["@id"] + f"/Participant/{i}"},
+                **{"@id": schema_id + f"/Participant/{i}"},
                 entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
                 roleName="A?",
             )
         )
 
-    schema["slots"] = slots
-    schema["participants"] = [p.dict(by_alias=True, exclude_none=True) for p in participants]
     all_slots.extend(slots)
 
     refvars = defaultdict(list)
@@ -428,13 +416,12 @@ def convert_yaml_to_sdf(
         references = [s["reference"] for s in slot_list if "reference" in s]
         qnode = references[0] if references else "Q355120"  # Qnode for entity
         entity = Entity(
-            **{"@id": schema["@id"] + f"/{refvar}"},  # TODO: Figure out how to use aliases properly
+            **{"@id": schema_id + f"/{refvar}"},  # type: ignore[arg-type]  # TODO: Figure out how to use aliases properly
             name=refvar,
             qlabel=None,  # TODO: Fill with KGTK query
             qnode=qnode,
         )
         entities.append(entity)
-    schema["entities"] = [e.dict(by_alias=True, exclude_none=True) for e in entities]
 
     # Cleaning "-a" suffix for slots with counter == 1.
     # for cur_step in steps:
@@ -442,29 +429,25 @@ def convert_yaml_to_sdf(
     #         if schema_slot_counter[cur_slot["name"]] == 1:
     #             cur_slot["@id"] = cur_slot["@id"].strip("-a")
 
-    schema["steps"] = steps
-
-    schema["order"] = create_orders(yaml_data, schema["@id"], step_map, set())
+    schema_order = create_orders(yaml_data, schema_id, step_map, set())
 
     child_dict = {c.child: c for c in children}
-    for order in schema["order"]:
+    for order in schema_order:
         if "before" in order:
             child = child_dict[order["before"]]
             child.outlinks = list(child.outlinks if child.outlinks else []) + [order["after"]]
 
     event = Event(
-        **{"@id": schema["@id"]},
+        **{"@id": schema_id},  # type: ignore[arg-type]
         children=children,
         description="N/a",  # TODO: Remove if confirmed not required
-        name=schema["@id"],
+        name=schema_id,
         participants=None,
         qlabel=None,  # TODO: Fill with KGTK query
         qnode=None,
         TA1explanation=None,  # TODO: Fill once extractable from YAML
     )
     events.append(event)
-
-    schema["events"] = [e.dict(by_alias=True, exclude_none=True) for e in events]
 
     return events, entities
 
