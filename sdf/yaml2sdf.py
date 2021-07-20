@@ -10,7 +10,6 @@ from pathlib import Path
 import re
 import typing
 from typing import (
-    AbstractSet,
     Any,
     List,
     Mapping,
@@ -28,7 +27,7 @@ import yaml
 
 from sdf.ontology import ontology
 from sdf.sdf_schema import Child, Entity, Event, Library, Participant, SingleOrSeq
-from sdf.yaml_schema import Before, Container, Overlaps, Schema, Slot, Step
+from sdf.yaml_schema import Before, Schema, Slot, Step
 
 VALIDATOR_ENDPOINTS = {
     "remote": "http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
@@ -211,16 +210,12 @@ def get_step_id(step: Step, schema_id: str) -> str:
     return f"{schema_id}/Steps/{replace_whitespace(step.id)}"
 
 
-def create_orders(
-    yaml_data: Schema, schema_id: str, step_map: Mapping[str, str], ignored_steps: AbstractSet[str]
-) -> Sequence[Mapping[str, Any]]:
+def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Sequence[Mapping[str, Any]]:
     """Gets orders.
 
     Args:
         yaml_data: Data from YAML file.
-        schema_id: Schema ID.
         step_map: Mapping of steps from YAML IDs to SDF IDs.
-        ignored_steps: Step IDs to ignore relations for.
 
     Returns:
         Orders in SDF format.
@@ -230,60 +225,28 @@ def create_orders(
     for order in yaml_data.order:
         if isinstance(order, Before):
             order_tuples.append((order.before, order.after))
-        elif isinstance(order, Container):
-            order_tuples.append((order.container, order.contained))
-        elif isinstance(order, Overlaps):
-            order_tuples.append(tuple(order.overlaps))
         else:
             raise NotImplementedError
     order_ids = set(itertools.chain.from_iterable(order_tuples))
-    missing_order_ids = order_ids - step_ids - ignored_steps
+    missing_order_ids = order_ids - step_ids
     if missing_order_ids:
         for missing_id in sorted(missing_order_ids):
             logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
         exit(1)
 
-    base_order_id = f"{schema_id}/Order/"
     orders = []
     for order in yaml_data.order:
         if isinstance(order, Before):
-            if order.before in ignored_steps or order.after in ignored_steps:
-                continue
             before_id = step_map[order.before]
             after_id = step_map[order.after]
             cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
-                "@id": f"{base_order_id}precede-{order.before}-{order.after}",
-                "comment": f"{order.before} precedes {order.after}",
                 "before": before_id,
                 "after": after_id,
             }
-        elif isinstance(order, Container):
-            if order.container in ignored_steps or order.contained in ignored_steps:
-                continue
-            container_id = step_map[order.container]
-            contained_id = step_map[order.contained]
-            cur_order = {
-                "@id": f"{base_order_id}contain-{order.container}-{order.contained}",
-                "comment": f"{order.container} contains {order.contained}",
-                "container": container_id,
-                "contained": contained_id,
-            }
-        elif isinstance(order, Overlaps):
-            if any(overlap in ignored_steps for overlap in order.overlaps):
-                continue
-            overlaps_id = [step_map[overlap] for overlap in order.overlaps]
-            cur_order = {
-                "@id": f"{base_order_id}overlap-{'-'.join(order.overlaps)}",
-                "comment": f"{', '.join(order.overlaps)} overlaps",
-                "overlaps": overlaps_id,
-            }
         else:
             raise NotImplementedError
-        # isinstance() checks will always be True but are needed for mypy
-        if isinstance(cur_order["@id"], str):
-            cur_order["@id"] = replace_whitespace(cur_order["@id"])
-        if order.comment is not None and isinstance(cur_order["comment"], str):
-            cur_order["comment"] = [cur_order["comment"], order.comment]
+        if order.comment is not None:
+            cur_order["comment"] = order.comment
         orders.append(cur_order)
     return orders
 
@@ -422,13 +385,12 @@ def convert_yaml_to_sdf(
     #         if schema_slot_counter[cur_slot["name"]] == 1:
     #             cur_slot["@id"] = cur_slot["@id"].strip("-a")
 
-    schema_order = create_orders(yaml_data, schema_id, step_map, set())
+    schema_order = create_orders(yaml_data, step_map)
 
     child_dict = {c.child: c for c in children}
     for order in schema_order:
-        if "before" in order:
-            child = child_dict[order["before"]]
-            child.outlinks = list(child.outlinks if child.outlinks else []) + [order["after"]]
+        child = child_dict[order["before"]]
+        child.outlinks = list(child.outlinks if child.outlinks else []) + [order["after"]]
 
     event = Event(
         **{"@id": schema_id},  # type: ignore[arg-type]
