@@ -610,6 +610,7 @@ def convert_files(
 
     with json_file.open("w") as file:
         json.dump(output_library, file, ensure_ascii=True, indent=4)
+        file.write("\n")
 
 
 def main() -> None:
