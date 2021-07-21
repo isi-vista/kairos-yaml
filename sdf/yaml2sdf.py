@@ -3,7 +3,6 @@
 import argparse
 from collections import defaultdict
 from copy import deepcopy
-import itertools
 import json
 import logging
 from pathlib import Path
@@ -60,14 +59,13 @@ def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Mapping[str
         Orders in SDF format.
     """
     step_ids = set(step.id for step in yaml_data.steps)
-    order_tuples: List[Tuple[str, ...]] = []
+    order_ids = []
     for order in yaml_data.order:
         if isinstance(order, Before):
-            order_tuples.append((order.before, order.after))
+            order_ids.extend([order.before, order.after])
         else:
             raise NotImplementedError
-    order_ids = set(itertools.chain.from_iterable(order_tuples))
-    missing_order_ids = order_ids - step_ids
+    missing_order_ids = set(order_ids) - step_ids
     if missing_order_ids:
         for missing_id in sorted(missing_order_ids):
             logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
