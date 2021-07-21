@@ -118,7 +118,7 @@ def convert_yaml_to_sdf(
         cur_step_id = get_step_id(step, schema_id)
         cur_step_comment: SingleOrSeq[str] = comments[idx + 1]
         event = Event(
-            **{"@id": cur_step_id},  # type: ignore[arg-type]
+            id=cur_step_id,
             name=step.id,
             participants=None,
             qlabel=None,  # TODO: Fill with KGTK query
@@ -147,7 +147,7 @@ def convert_yaml_to_sdf(
                 role = "A?"
             participants.append(
                 Participant(
-                    **{"@id": cur_step_id + f"/Participant/{i}"},
+                    id=cur_step_id + f"/Participant/{i}",
                     entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
                     roleName=role,
                 )
@@ -163,7 +163,7 @@ def convert_yaml_to_sdf(
 
         participants.append(
             Participant(
-                **{"@id": schema_id + f"/Participant/{i}"},
+                id=schema_id + f"/Participant/{i}",
                 entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
                 roleName="A?",
             )
@@ -176,7 +176,7 @@ def convert_yaml_to_sdf(
             f"wiki:{qnodes[0]}" if qnodes and qnodes[0] is not None else "Q355120"
         )  # Qnode for entity
         entity = Entity(
-            **{"@id": schema_id + f"/{refvar}"},  # type: ignore[arg-type]  # TODO: Figure out how to use aliases properly
+            id=schema_id + f"/{refvar}",
             name=refvar,
             qlabel=None,  # TODO: Fill with KGTK query
             qnode=qnode,
@@ -190,7 +190,7 @@ def convert_yaml_to_sdf(
         child_dict[before_id].outlinks = after_ids
 
     event = Event(
-        **{"@id": schema_id},  # type: ignore[arg-type]
+        id=schema_id,
         children=children,
         name=schema_id,
         participants=None,
@@ -223,13 +223,11 @@ def merge_schemas(
         Data in JSON output format.
     """
     sdf = Library(
-        **{  # type: ignore[arg-type]
-            "@context": [
-                "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.1.jsonld",
-                {performer_prefix: performer_uri},
-            ],
-            "@id": f"{performer_prefix}:Submissions/TA1/{library_id}",
-        },
+        context=[
+            "https://kairos-sdf.s3.amazonaws.com/context/kairos-v1.1.jsonld",
+            {performer_prefix: performer_uri},
+        ],
+        id=f"{performer_prefix}:Submissions/TA1/{library_id}",
         comment=(
             "This file was generated using a very rudimentary implementation of SDF v1.1, "
             "so it does not look good and likely contains errors."

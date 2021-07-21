@@ -23,6 +23,7 @@ class InternalBase(BaseModel):
     class Config:
         """Model configuration."""
 
+        allow_population_by_field_name = True
         extra = Extra.forbid
 
 
