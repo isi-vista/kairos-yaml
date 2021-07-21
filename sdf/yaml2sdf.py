@@ -122,7 +122,7 @@ def convert_yaml_to_sdf(
             name=step.id,
             participants=None,
             qlabel=None,  # TODO: Fill with KGTK query
-            qnode=step.reference,
+            qnode=f"wiki:{step.reference}" if step.reference else None,
             TA1explanation=None,  # TODO: Fill once extractable from YAML
         )
         events.append(event)
