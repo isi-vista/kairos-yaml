@@ -1,7 +1,7 @@
 """Converts CMU YAML into KAIROS SDF JSON-LD."""
 
 import argparse
-from collections import Counter, defaultdict
+from collections import defaultdict
 from copy import deepcopy
 import itertools
 import json
@@ -141,46 +141,16 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
 
-def create_slot(
-    slot: Slot,
-    schema_slot_counter: typing.Counter[str],
-    parent_id: str,
-    step_type: Optional[str],
-    parent_type_id: str,
-    slot_shared: bool,
-) -> MutableMapping[str, Any]:
+def create_slot(slot: Slot) -> MutableMapping[str, Any]:
     """Gets slot.
 
     Args:
         slot: Slot data.
-        schema_slot_counter: Slot counter.
-        parent_id: Parent object ID.
-        step_type: Step type.
-        parent_type_id: ID of the parent object's type.
-        slot_shared: Whether slot is shared.
 
     Returns:
         Slot.
     """
-    role_key = "role" if step_type is not None else "roleName"
-
-    cur_slot: MutableMapping[str, Any] = {
-        "name": get_slot_name(slot, slot_shared),
-        "@id": get_slot_id(slot, schema_slot_counter, parent_id, slot_shared),
-        role_key: get_slot_role(slot, step_type, parent_type_id),
-    }
-
-    # Generate loosest constraints if none are given
-    if not slot.constraints:
-        if step_type is None:
-            slot.constraints = sorted(list(ontology.entities) + ["EVENT"])
-        else:
-            primitive = ontology.get_default_event(step_type)
-            if primitive is None:
-                raise ValueError(f"Invalid primitive {primitive}")
-            slot.constraints = ontology.events[primitive].args[slot.role].constraints
-    constraints = get_slot_constraints([con for con in slot.constraints if con != "NotInOntology"])
-    cur_slot["entityTypes"] = constraints
+    cur_slot: MutableMapping[str, Any] = {}
 
     if slot.reference is not None:
         cur_slot["reference"] = f"wiki:{slot.reference}"
@@ -287,9 +257,6 @@ def convert_yaml_to_sdf(
 
     all_slots = []
 
-    # For naming slot ID
-    schema_slot_counter: typing.Counter[str] = Counter()
-
     for idx, step in enumerate(yaml_data.steps):
         cur_step_id = get_step_id(step, schema_id)
         cur_step_comment: SingleOrSeq[str] = comments[idx + 1]
@@ -315,18 +282,7 @@ def convert_yaml_to_sdf(
         slots = []
         participants = []
         for i, slot in enumerate(step.slots):
-            slot_shared = sum([slot.role == sl.role for sl in step.slots]) > 1
-
-            slots.append(
-                create_slot(
-                    slot,
-                    schema_slot_counter,
-                    cur_step_id,
-                    step.primitive,
-                    "",
-                    slot_shared,
-                )
-            )
+            slots.append(create_slot(slot))
             primitive = ontology.get_default_event(step.primitive)
             if primitive:
                 role = f"A{ontology.events[primitive].args[slot.role].position[-1]}"
@@ -346,11 +302,7 @@ def convert_yaml_to_sdf(
     slots = []
     participants = []
     for i, slot in enumerate(yaml_data.slots):
-        slot_shared = sum([slot.role == sl.role for sl in yaml_data.slots]) > 1
-
-        parsed_slot = create_slot(
-            slot, schema_slot_counter, schema_id, None, schema_id, slot_shared
-        )
+        parsed_slot = create_slot(slot)
         slots.append(parsed_slot)
 
         participants.append(
