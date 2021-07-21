@@ -8,7 +8,6 @@ import json
 import logging
 from pathlib import Path
 import re
-import typing
 from typing import (
     Any,
     List,
@@ -27,7 +26,7 @@ import yaml
 
 from sdf.ontology import ontology
 from sdf.sdf_schema import Child, Entity, Event, Library, Participant, SingleOrSeq
-from sdf.yaml_schema import Before, Schema, Slot, Step
+from sdf.yaml_schema import Before, Schema, Step
 
 VALIDATOR_ENDPOINTS = {
     "remote": "http://validation.kairos.nextcentury.com/json-ld/ksf/validate",
@@ -45,100 +44,6 @@ def replace_whitespace(name: str) -> str:
         String with whitespace replaced.
     """
     return re.sub(r"\s+", "-", name)
-
-
-def get_step_type(step: Step) -> str:
-    """Gets type of step.
-
-    Args:
-        step: Step data.
-
-    Returns:
-        Step type.
-    """
-    primitive = ontology.get_default_event(step.primitive)
-
-    if primitive not in ontology.events:
-        logging.warning("Primitive '%s' in step '%s' not in ontology", step.primitive, step.id)
-
-    return f"kairos:Primitives/Events/{primitive}"
-
-
-def get_slot_role(slot: Slot, step_type: Optional[str], step_id: str) -> str:
-    """Gets slot role.
-
-    Args:
-        slot: Slot data.
-        step_type: Type of step.
-        step_id: ID of step.
-
-    Returns:
-        Slot role.
-    """
-    if step_type is not None:
-        event_type = ontology.events.get(step_type, None)
-        if event_type is not None and slot.role not in event_type.args:
-            logging.warning(
-                "Role '%s' is not valid for event '%s'", slot.role, event_type.full_type
-            )
-
-    return f"{step_id}/Slots/{slot.role}"
-
-
-def get_slot_name(slot: Slot, slot_shared: bool) -> str:
-    """Gets slot name.
-
-    Args:
-        slot: Slot data.
-        slot_shared: Whether slot is shared.
-
-    Returns:
-        Slot name.
-    """
-    name = slot.role
-    uppercase_indices = [index for index, char in enumerate(name) if char.isupper()]
-    if len(uppercase_indices) > 1:
-        name = name[: uppercase_indices[1]]
-    name = name.lower()
-    if slot_shared and slot.refvar is not None:
-        name += "-" + slot.refvar
-    return replace_whitespace(name)
-
-
-def get_slot_id(
-    slot: Slot, schema_slot_counter: typing.Counter[str], parent_id: str, slot_shared: bool
-) -> str:
-    """Gets slot ID.
-
-    Args:
-        slot: Slot data.
-        schema_slot_counter: Slot counter.
-        parent_id: Parent object ID.
-        slot_shared: Whether slot is shared.
-
-    Returns:
-        Slot ID.
-    """
-    slot_name = get_slot_name(slot, slot_shared)
-    slot_id = chr(schema_slot_counter[slot_name] + 97)
-    schema_slot_counter[slot_name] += 1
-    return f"{parent_id}/Slots/{slot_name}-{slot_id}"
-
-
-def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
-    """Gets slot constraints.
-
-    Args:
-        constraints: Constraints.
-
-    Returns:
-        Slot constraints.
-    """
-    for entity in constraints:
-        if entity not in ontology.entities and entity != "EVENT":
-            logging.warning("Entity '%s' not in ontology", entity)
-
-    return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
 
 def get_step_id(step: Step, schema_id: str) -> str:
