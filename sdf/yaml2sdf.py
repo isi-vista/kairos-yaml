@@ -8,17 +8,7 @@ import json
 import logging
 from pathlib import Path
 import re
-from typing import (
-    Any,
-    List,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-)
+from typing import Any, List, Mapping, MutableMapping, MutableSequence, Optional, Sequence, Tuple
 
 from pydantic import parse_obj_as
 import requests
@@ -59,7 +49,7 @@ def get_step_id(step: Step, schema_id: str) -> str:
     return f"{schema_id}/Steps/{replace_whitespace(step.id)}"
 
 
-def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Sequence[Mapping[str, Any]]:
+def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Mapping[str, Sequence[str]]:
     """Gets orders.
 
     Args:
@@ -83,21 +73,15 @@ def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Sequence[Ma
             logging.error("The ID '%s' in `order` is not in `steps`", missing_id)
         exit(1)
 
-    orders = []
+    orders = defaultdict(list)
     for order in yaml_data.order:
         if isinstance(order, Before):
             before_id = step_map[order.before]
             after_id = step_map[order.after]
-            cur_order: MutableMapping[str, Union[str, Sequence[str]]] = {
-                "before": before_id,
-                "after": after_id,
-            }
+            orders[before_id].append(after_id)
         else:
             raise NotImplementedError
-        if order.comment is not None:
-            cur_order["comment"] = order.comment
-        orders.append(cur_order)
-    return orders
+    return dict(orders)
 
 
 def convert_yaml_to_sdf(
@@ -205,9 +189,8 @@ def convert_yaml_to_sdf(
     schema_order = create_orders(yaml_data, step_map)
 
     child_dict = {c.child: c for c in children}
-    for order in schema_order:
-        child = child_dict[order["before"]]
-        child.outlinks = list(child.outlinks if child.outlinks else []) + [order["after"]]
+    for before_id, after_ids in schema_order.items():
+        child_dict[before_id].outlinks = after_ids
 
     event = Event(
         **{"@id": schema_id},  # type: ignore[arg-type]
