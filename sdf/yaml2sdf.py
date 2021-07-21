@@ -229,12 +229,12 @@ def merge_schemas(
         ],
         id=f"{performer_prefix}:Submissions/TA1/{library_id}",
         comment=(
-            "This file was generated using a very rudimentary implementation of SDF v1.1, "
+            "This file was generated using a very rudimentary implementation of SDF v1.1.1, "
             "so it does not look good and likely contains errors."
         ),
         entities=entities,
         events=events,
-        sdfVersion="1.1",
+        sdfVersion="1.1.1",
         version=f"{performer_prefix}_{latest_version}",
     )
 

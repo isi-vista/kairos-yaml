@@ -1,4 +1,4 @@
-"""Specification of SDF schema format v1.1."""
+"""Specification of SDF schema format v1.1.1."""
 
 # from datetime import datetime, timedelta
 from typing import Any, Optional, Sequence, Tuple, TypeVar, Union
@@ -62,6 +62,8 @@ class Entity(InternalBase):
     qlabel: Optional[str]
     qnode: str
     reference: Optional[str]
+    TA2handle: Optional[str]
+    TA2qnode: Optional[str]
 
 
 class Participant(InternalBase):
@@ -77,17 +79,18 @@ class Participant(InternalBase):
 class Relation(InternalBase):
     """Relation between entities and/or events."""
 
-    id: str = Field(alias="@id")
     confidence: Optional[float]
     modality: Optional[SingleOrSeq[str]]
     name: Optional[str]
-    provenance: Optional[SingleOrSeq[str]]
     reference: Optional[str]
     relationObject: str
+    relationObject_prov: Optional[str]
     relationPredicate: str
     relationProvenance: SingleOrSeq[str]
     relationSubject: str
+    relationSubject_prov: Optional[str]
     TA1explanation: Optional[str]
+    TA2handle: Optional[str]
 
 
 class Temporal(InternalBase):
@@ -117,6 +120,7 @@ class Event(InternalBase):
     modality: Optional[SingleOrSeq[str]]
     name: str
     outlink_gate: Optional[str]
+    outlinks: Optional[SingleOrSeq[str]]
     participants: Optional[Sequence[Participant]]
     provenance: Optional[SingleOrSeq[str]]
     qlabel: Optional[str]
@@ -125,6 +129,7 @@ class Event(InternalBase):
     relations: Optional[Sequence[Relation]]
     repeatable: Optional[bool]
     TA1explanation: Optional[str]
+    TA2handle: Optional[str]
     template: Optional[str]
     temporal: Optional[SingleOrSeq[Temporal]]
 
