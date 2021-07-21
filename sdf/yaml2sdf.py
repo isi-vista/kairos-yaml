@@ -116,10 +116,6 @@ def convert_yaml_to_sdf(
 
     schema_id = f"{performer_prefix}:Schemas/{yaml_data.schema_id}"
 
-    # Remove any steps without a primitive
-    # ignored_steps = set(step.id for step in yaml_data.steps if step.primitive == "NotInOntology")
-    # yaml_data.steps = [step for step in yaml_data.steps if step.primitive != "NotInOntology"]
-
     # Get comments
     comments = [x.id.replace("-", " ") for x in yaml_data.steps]
     comments = ["Steps:"] + [f"{idx}. {text}" for idx, text in enumerate(comments, start=1)]
@@ -205,12 +201,6 @@ def convert_yaml_to_sdf(
             qnode=qnode,
         )
         entities.append(entity)
-
-    # Cleaning "-a" suffix for slots with counter == 1.
-    # for cur_step in steps:
-    #     for cur_slot in cur_step["participants"]:
-    #         if schema_slot_counter[cur_slot["name"]] == 1:
-    #             cur_slot["@id"] = cur_slot["@id"].strip("-a")
 
     schema_order = create_orders(yaml_data, step_map)
 
