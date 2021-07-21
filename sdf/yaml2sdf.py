@@ -119,7 +119,6 @@ def convert_yaml_to_sdf(
         cur_step_comment: SingleOrSeq[str] = comments[idx + 1]
         event = Event(
             **{"@id": cur_step_id},  # type: ignore[arg-type]
-            description="N/a",  # TODO: Remove if confirmed not required
             name=step.id,
             participants=None,
             qlabel=None,  # TODO: Fill with KGTK query
@@ -193,7 +192,6 @@ def convert_yaml_to_sdf(
     event = Event(
         **{"@id": schema_id},  # type: ignore[arg-type]
         children=children,
-        description="N/a",  # TODO: Remove if confirmed not required
         name=schema_id,
         participants=None,
         qlabel=None,  # TODO: Fill with KGTK query
