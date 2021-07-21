@@ -141,32 +141,6 @@ def get_slot_constraints(constraints: Sequence[str]) -> Sequence[str]:
     return [f"kairos:Primitives/Entities/{entity}" for entity in constraints]
 
 
-def create_slot(slot: Slot) -> MutableMapping[str, Any]:
-    """Gets slot.
-
-    Args:
-        slot: Slot data.
-
-    Returns:
-        Slot.
-    """
-    cur_slot: MutableMapping[str, Any] = {}
-
-    if slot.reference is not None:
-        cur_slot["reference"] = f"wiki:{slot.reference}"
-
-    # Set refvar and warn if missing
-    if slot.refvar is not None:
-        cur_slot["refvar"] = replace_whitespace(slot.refvar)
-    else:
-        logging.warning("%s misses refvar", str(slot))
-
-    if slot.comment is not None:
-        cur_slot["comment"] = slot.comment
-
-    return cur_slot
-
-
 def get_step_id(step: Step, schema_id: str) -> str:
     """Gets step ID.
 
@@ -255,7 +229,7 @@ def convert_yaml_to_sdf(
     # For order
     step_map: MutableMapping[str, str] = {}
 
-    all_slots = []
+    refvars = defaultdict(list)
 
     for idx, step in enumerate(yaml_data.steps):
         cur_step_id = get_step_id(step, schema_id)
@@ -279,10 +253,11 @@ def convert_yaml_to_sdf(
 
         step_map[step.id] = cur_step_id
 
-        slots = []
         participants = []
         for i, slot in enumerate(step.slots):
-            slots.append(create_slot(slot))
+            if slot.refvar is None:
+                raise RuntimeError(f"{slot} misses refvar")
+            refvars[replace_whitespace(slot.refvar)].append(slot.reference)
             primitive = ontology.get_default_event(step.primitive)
             if primitive:
                 role = f"A{ontology.events[primitive].args[slot.role].position[-1]}"
@@ -297,13 +272,12 @@ def convert_yaml_to_sdf(
             )
 
         event.participants = participants
-        all_slots.extend(slots)
 
-    slots = []
     participants = []
     for i, slot in enumerate(yaml_data.slots):
-        parsed_slot = create_slot(slot)
-        slots.append(parsed_slot)
+        if slot.refvar is None:
+            raise RuntimeError(f"{slot} misses refvar")
+        refvars[replace_whitespace(slot.refvar)].append(slot.reference)
 
         participants.append(
             Participant(
@@ -313,16 +287,12 @@ def convert_yaml_to_sdf(
             )
         )
 
-    all_slots.extend(slots)
-
-    refvars = defaultdict(list)
     entities = []
-    for slot_dict in all_slots:
-        refvars[slot_dict["refvar"]].append(slot_dict)
-    for refvar, slot_list in refvars.items():
+    for refvar, qnodes in refvars.items():
         # TODO: Check for consistency across usages, and make qnode required
-        references = [s["reference"] for s in slot_list if "reference" in s]
-        qnode = references[0] if references else "Q355120"  # Qnode for entity
+        qnode = (
+            f"wiki:{qnodes[0]}" if qnodes and qnodes[0] is not None else "Q355120"
+        )  # Qnode for entity
         entity = Entity(
             **{"@id": schema_id + f"/{refvar}"},  # type: ignore[arg-type]  # TODO: Figure out how to use aliases properly
             name=refvar,
