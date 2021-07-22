@@ -176,6 +176,8 @@ def convert_yaml_to_sdf(
         for i, slot in enumerate(step.slots):
             if slot.refvar is None:
                 raise RuntimeError(f"{slot} misses refvar")
+            if slot.reference is None:
+                raise RuntimeError(f"{slot.refvar} in {yaml_data.schema_id} misses qnode")
             refvars[replace_whitespace(slot.refvar)].append(slot.reference)
             primitive = ontology.get_default_event(step.primitive)
             if primitive:
@@ -196,6 +198,8 @@ def convert_yaml_to_sdf(
     for i, slot in enumerate(yaml_data.slots):
         if slot.refvar is None:
             raise RuntimeError(f"{slot} misses refvar")
+        if slot.reference is None:
+            raise RuntimeError(f"{slot.refvar} in {yaml_data.schema_id} misses qnode")
         refvars[replace_whitespace(slot.refvar)].append(slot.reference)
 
         participants.append(
@@ -208,10 +212,8 @@ def convert_yaml_to_sdf(
 
     entities = []
     for refvar, qnodes in refvars.items():
-        # TODO: Check for consistency across usages, and make qnode required
-        qnode = (
-            f"wiki:{qnodes[0]}" if qnodes and qnodes[0] is not None else "Q355120"
-        )  # Qnode for entity
+        # TODO: Check for consistency across usages
+        qnode = f"wiki:{qnodes[0]}"
         entity = Entity(
             id=schema_id + f"/{refvar}",
             name=refvar,
