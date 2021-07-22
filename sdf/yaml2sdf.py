@@ -3,6 +3,7 @@
 import argparse
 from collections import defaultdict
 from copy import deepcopy
+from http import HTTPStatus
 import json
 import logging
 from pathlib import Path
@@ -82,6 +83,45 @@ def create_orders(yaml_data: Schema, step_map: Mapping[str, str]) -> Mapping[str
     return dict(orders)
 
 
+def get_qnode_label(qnode: str) -> Optional[str]:
+    """Retrieves the label for a qnode or pnode from KGTK.
+
+    Args:
+        qnode: Qnode.
+
+    Returns:
+        Label for qnode, if one is found.
+    """
+    params = {
+        "q": qnode,
+        "language": "en",
+        "type": "exact",
+        "item": "qnode" if qnode.startswith("Q") else "property",
+        "extra_info": "true",
+        "size": "1",
+    }
+
+    kgtk_request_url = "https://kgtk.isi.edu/api"
+    try:
+        kgtk_response = requests.get(kgtk_request_url, params=params)
+    except requests.exceptions.RequestException:
+        return None
+    if kgtk_response.status_code != HTTPStatus.OK:
+        return None
+    response_json = kgtk_response.json()
+    if not response_json:
+        return None
+    qnode_data = response_json[0]
+    if qnode_data["qnode"] != qnode:
+        return None
+    if "label" in qnode_data:
+        label = qnode_data["label"][0]
+        assert isinstance(label, str)
+        return label
+    else:
+        return None
+
+
 def convert_yaml_to_sdf(
     yaml_data: Schema, performer_prefix: str
 ) -> Tuple[Sequence[Event], Sequence[Entity]]:
@@ -121,7 +161,6 @@ def convert_yaml_to_sdf(
             id=cur_step_id,
             name=step.id,
             participants=None,
-            qlabel=None,  # TODO: Fill with KGTK query
             qnode=f"wiki:{step.reference}" if step.reference else None,
             TA1explanation=None,  # TODO: Fill once extractable from YAML
         )
@@ -178,7 +217,6 @@ def convert_yaml_to_sdf(
         entity = Entity(
             id=schema_id + f"/{refvar}",
             name=refvar,
-            qlabel=None,  # TODO: Fill with KGTK query
             qnode=qnode,
         )
         entities.append(entity)
@@ -194,13 +232,41 @@ def convert_yaml_to_sdf(
         children=children,
         name=schema_id,
         participants=None,
-        qlabel=None,  # TODO: Fill with KGTK query
         qnode=None,
         TA1explanation=None,  # TODO: Fill once extractable from YAML
     )
     events.append(event)
 
     return events, entities
+
+
+def set_qlabels(events: Sequence[Event], entities: Sequence[Entity]) -> None:
+    """Sets the "qlabel" field, where possible, for all events and entities.
+
+    Args:
+        events: Events to retrieve qlabels for.
+        entities: Entities to retrieve qlabels for.
+    """
+    qnodes = set()
+    for event in events:
+        if event.qnode:
+            qnodes.add(event.qnode)
+    for entity in entities:
+        if entity.qnode:
+            qnodes.add(entity.qnode)
+    qlabels = {}
+    for qnode in sorted(qnodes):
+        qlabel = get_qnode_label(qnode[len("wiki:") :])
+        if qlabel is not None:
+            qlabels[qnode] = qlabel
+        else:
+            logging.warning("Missing label for %s", qnode[len("wiki:") :])
+    for event in events:
+        if event.qnode in qlabels:
+            event.qlabel = qlabels[event.qnode]
+    for entity in entities:
+        if entity.qnode in qlabels:
+            entity.qlabel = qlabels[entity.qnode]
 
 
 def merge_schemas(
@@ -275,6 +341,7 @@ def convert_all_yaml_to_sdf(
     performer_uri: str,
     library_id: str,
     validator: Optional[str],
+    fill_qlables: bool = False,
 ) -> Mapping[str, Any]:
     """Convert YAML schema library into SDF schema library.
 
@@ -284,6 +351,7 @@ def convert_all_yaml_to_sdf(
         performer_uri: Performer URI for context.
         library_id: ID of schema collection.
         validator: Validator to use.
+        fill_qlables: Whether to fill in the qlabel field.
 
     Returns:
         Data in JSON output format.
@@ -301,6 +369,9 @@ def convert_all_yaml_to_sdf(
         events, entities = convert_yaml_to_sdf(yaml_schema, performer_prefix)
         all_events.extend(events)
         all_entities.extend(entities)
+
+    if fill_qlables:
+        set_qlabels(all_events, all_entities)
 
     latest_version = max(schema.schema_version for schema in parsed_yaml)
     json_data = merge_schemas(
@@ -321,6 +392,7 @@ def convert_files(
     performer_prefix: str,
     performer_uri: str,
     validator: Optional[str],
+    fill_qlables: bool = False,
 ) -> None:
     """Converts YAML files into a single JSON file.
 
@@ -330,6 +402,7 @@ def convert_files(
         performer_prefix: Performer prefix for context.
         performer_uri: Performer URI for context.
         validator: Validator to use.
+        fill_qlables: Whether to fill in the qlabel field.
     """
     input_schemas = []
     for yaml_file in yaml_files:
@@ -338,7 +411,7 @@ def convert_files(
         input_schemas.extend(yaml_data)
 
     output_library = convert_all_yaml_to_sdf(
-        input_schemas, performer_prefix, performer_uri, json_file.stem, validator
+        input_schemas, performer_prefix, performer_uri, json_file.stem, validator, fill_qlables
     )
 
     with json_file.open("w") as file:
@@ -356,6 +429,12 @@ def main() -> None:
     p.add_argument("--performer-prefix", required=True, help="Performer prefix for context.")
     p.add_argument("--performer-uri", required=True, help="Performer URI for context.")
     p.add_argument("--validator", choices=list(VALIDATOR_ENDPOINTS), help="Validator to use.")
+    p.add_argument(
+        "--fill-qlabels",
+        action="store_true",
+        help="Whether to fill in the qlabel field. This can take a while to run, "
+        "so it is disabled by default.",
+    )
 
     args = p.parse_args()
 
@@ -365,6 +444,7 @@ def main() -> None:
         args.performer_prefix,
         args.performer_uri,
         args.validator,
+        args.fill_qlabels,
     )
 
 
