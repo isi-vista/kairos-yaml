@@ -212,7 +212,10 @@ def convert_yaml_to_sdf(
 
     entities = []
     for refvar, qnodes in refvars.items():
-        # TODO: Check for consistency across usages
+        if len(set(qnodes)) != 1:
+            raise RuntimeError(
+                f"{refvar} in {yaml_data.schema_id} has inconsistent qnodes: {sorted(set(qnodes))}"
+            )
         qnode = f"wiki:{qnodes[0]}"
         entity = Entity(
             id=schema_id + f"/{refvar}",
