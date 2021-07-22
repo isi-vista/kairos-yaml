@@ -187,7 +187,7 @@ def convert_yaml_to_sdf(
             participants.append(
                 Participant(
                     id=cur_step_id + f"/Participant/{i}",
-                    entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
+                    entity=slot.refvar,
                     roleName=role,
                 )
             )
@@ -205,7 +205,7 @@ def convert_yaml_to_sdf(
         participants.append(
             Participant(
                 id=schema_id + f"/Participant/{i}",
-                entity=slot.refvar if slot.refvar else "",  # TODO: Make refvar required in YAML
+                entity=slot.refvar,
                 roleName="A?",
             )
         )
